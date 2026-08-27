@@ -19,3 +19,5 @@ artifacts and local MP3 files are intentionally not included.
 - Use `?view=dns&search=zelda` to open a direct Google search route.
 - Open the Switch Cemu tile for a public-safe local package install simulation;
   binaries, keys, WUA/game content, tickets, and certificates are not published.
+- The Switch Cemu upload picker is client-side only; it scans selected file names,
+  sizes, and types in the browser without uploading the files anywhere.
