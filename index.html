@@ -1411,6 +1411,168 @@
       background-size: 42px 42px;
     }
 
+    .game-field.cemu-runtime-field {
+      display: grid;
+      padding: 18px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 24%),
+        linear-gradient(135deg, rgba(255, 55, 75, 0.16), rgba(5, 8, 14, 0.88));
+      background-size: auto;
+    }
+
+    .cemu-runtime {
+      height: 100%;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: auto auto minmax(42px, 1fr) auto;
+      gap: 10px;
+    }
+
+    .runtime-header {
+      display: grid;
+      grid-template-columns: 58px minmax(0, 1fr) auto;
+      gap: 14px;
+      align-items: center;
+      min-width: 0;
+    }
+
+    .runtime-mark {
+      width: 58px;
+      height: 58px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255, 205, 211, 0.48);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.16) 0 12px, transparent 12px),
+        linear-gradient(135deg, #ff4158, #25040d);
+      color: #ffffff;
+      font-size: 24px;
+      font-weight: 900;
+    }
+
+    .runtime-title {
+      color: #ffffff;
+      font-size: 22px;
+      line-height: 1;
+      font-weight: 900;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .runtime-subtitle {
+      margin-top: 7px;
+      color: #ffc9d0;
+      font: 800 11px Consolas, "Lucida Console", monospace;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .runtime-badge {
+      padding: 8px 10px;
+      border: 1px solid rgba(255, 159, 170, 0.42);
+      background: rgba(12, 16, 25, 0.74);
+      color: var(--lime);
+      font-size: 11px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .runtime-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .runtime-cell {
+      min-height: 54px;
+      padding: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      background: rgba(16, 21, 31, 0.72);
+      min-width: 0;
+    }
+
+    .runtime-cell span,
+    .runtime-cell strong {
+      display: block;
+      min-width: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .runtime-cell span {
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 900;
+    }
+
+    .runtime-cell strong {
+      margin-top: 5px;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .runtime-file-list {
+      min-height: 0;
+      display: grid;
+      align-content: start;
+      gap: 7px;
+      overflow: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 74, 94, 0.7) rgba(255, 255, 255, 0.1);
+    }
+
+    .runtime-file-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+      min-height: 34px;
+      padding: 8px 10px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(3, 7, 14, 0.74);
+    }
+
+    .runtime-file-row span,
+    .runtime-file-row strong {
+      min-width: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .runtime-file-name {
+      display: block;
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .runtime-file-meta {
+      display: block;
+      margin-top: 3px;
+      color: #ffb8c0;
+      font: 800 10px Consolas, "Lucida Console", monospace;
+    }
+
+    .runtime-empty,
+    .runtime-note {
+      padding: 10px 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(2, 6, 12, 0.62);
+      color: #dbeafe;
+      font-size: 11px;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .runtime-note {
+      color: #9bdcff;
+    }
+
     .game-player {
       position: absolute;
       left: 22%;
@@ -1824,6 +1986,37 @@
         min-height: 64px;
       }
 
+      .game-title {
+        left: 18px;
+        top: 24px;
+        right: 18px;
+        font-size: 20px;
+      }
+
+      .game-field {
+        left: 18px;
+        right: 18px;
+        top: 72px;
+        bottom: 72px;
+      }
+
+      .game-field.cemu-runtime-field {
+        padding: 12px;
+      }
+
+      .runtime-header,
+      .runtime-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .runtime-mark {
+        display: none;
+      }
+
+      .runtime-badge {
+        justify-self: start;
+      }
+
       .status-line {
         width: 100%;
       }
@@ -2136,7 +2329,7 @@ Private: browser metadata only.</div>
             <section id="gameView" class="view game-view" aria-label="Game simulation">
               <article class="sim-game">
                 <div id="gameTitle" class="game-title">Game Running</div>
-                <div class="game-field">
+                <div id="gameField" class="game-field">
                   <div class="game-player"></div>
                 </div>
               </article>
@@ -2349,6 +2542,7 @@ Private: browser metadata only.</div>
     const cemuFileInput = document.getElementById("cemuFileInput");
     const cemuFolderInput = document.getElementById("cemuFolderInput");
     const gameTitle = document.getElementById("gameTitle");
+    const gameField = document.getElementById("gameField");
 
     const dnsProfile = {
       portalUrl: "https://dns.switchbru.com/",
@@ -2447,6 +2641,9 @@ Private: browser metadata only.</div>
       }
       if (tile.route === "cemu") {
         renderCemu();
+      }
+      if (tile.route === "game") {
+        renderGameSim();
       }
       showView(tile.route);
       statusLine.textContent = `${tile.label} opened.`;
@@ -2888,6 +3085,75 @@ Private: browser metadata only.</div>
       ].join("\n");
     }
 
+    function renderGameSim() {
+      gameTitle.textContent = "Game Running";
+      gameField.classList.remove("cemu-runtime-field");
+      gameField.innerHTML = '<div class="game-player"></div>';
+    }
+
+    function renderCemuLaunchSim() {
+      const count = state.cemuFiles.length;
+      const totalBytes = state.cemuFiles.reduce((sum, file) => sum + file.size, 0);
+      const primary = primaryCemuFile();
+      gameTitle.textContent = count > 0 ? "Switch Cemu Launch Sim" : "Switch Cemu Preview";
+      gameField.classList.add("cemu-runtime-field");
+
+      if (!primary) {
+        gameField.innerHTML = `
+          <div class="cemu-runtime">
+            <div class="runtime-header">
+              <div class="runtime-mark">SC</div>
+              <div>
+                <div class="runtime-title">No Cemu Files Staged</div>
+                <div class="runtime-subtitle">Return to Switch Cemu and upload files first</div>
+              </div>
+              <div class="runtime-badge">WAITING</div>
+            </div>
+            <div class="runtime-empty">Launch Sim is ready, but no local package metadata is available yet.</div>
+            <div class="runtime-file-list">
+              <div class="runtime-empty">Use Upload Files or Folder on the Switch Cemu tile.</div>
+            </div>
+            <div class="runtime-note">Browser safety mode: selected files stay local and are represented as metadata only.</div>
+          </div>
+        `;
+        return;
+      }
+
+      const rows = state.cemuFiles.slice(0, 8).map((file) => `
+        <div class="runtime-file-row">
+          <span>
+            <span class="runtime-file-name">${escapeHtml(file.name)}</span>
+            <span class="runtime-file-meta">${escapeHtml(file.kind)} - ${escapeHtml(file.path)}</span>
+          </span>
+          <strong>${formatBytes(file.size)}</strong>
+        </div>
+      `);
+      if (state.cemuFiles.length > rows.length) {
+        rows.push(`<div class="runtime-empty">+${state.cemuFiles.length - rows.length} more local file${state.cemuFiles.length - rows.length === 1 ? "" : "s"} staged</div>`);
+      }
+
+      gameField.innerHTML = `
+        <div class="cemu-runtime">
+          <div class="runtime-header">
+            <div class="runtime-mark">SC</div>
+            <div>
+              <div class="runtime-title">${escapeHtml(primary.name)}</div>
+              <div class="runtime-subtitle">local-upload:/${escapeHtml(primary.path)}</div>
+            </div>
+            <div class="runtime-badge">STAGED</div>
+          </div>
+          <div class="runtime-grid">
+            <div class="runtime-cell"><span>Primary</span><strong>${escapeHtml(primary.kind)}</strong></div>
+            <div class="runtime-cell"><span>Files</span><strong>${count}</strong></div>
+            <div class="runtime-cell"><span>Total</span><strong>${formatBytes(totalBytes)}</strong></div>
+            <div class="runtime-cell"><span>Mode</span><strong>metadata</strong></div>
+          </div>
+          <div class="runtime-file-list">${rows.join("")}</div>
+          <div class="runtime-note">Launch Sim renders the staged Cemu file manifest. It does not execute binaries or upload game content.</div>
+        </div>
+      `;
+    }
+
     function selectRelative(offset) {
       if (state.screen !== "home") {
         showView("home");
@@ -3144,12 +3410,14 @@ Private: browser metadata only.</div>
       });
 
       document.getElementById("cemuLaunchButton").addEventListener("click", () => {
-        gameTitle.textContent = "Switch Cemu Preview";
+        renderCemuLaunchSim();
         cemuLog.textContent = [
-          "Launch sim started with the HUD visible.",
+          state.cemuFiles.length > 0 ? "Launch sim rendered staged files." : "Launch sim opened with no files staged.",
           "No binary or game package is loaded by the public webapp."
         ].join("\n");
         showView("game");
+        document.getElementById("screenTitle").textContent = "SWITCH CEMU";
+        document.getElementById("screenSubtitle").textContent = state.cemuFiles.length > 0 ? "STAGED FILE MANIFEST" : "NO FILES STAGED";
         statusLine.textContent = "Switch Cemu launch simulated.";
       });
       document.getElementById("cemuDnsButton").addEventListener("click", () => {

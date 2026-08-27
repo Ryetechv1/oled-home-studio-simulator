@@ -21,3 +21,5 @@ artifacts and local MP3 files are intentionally not included.
   binaries, keys, WUA/game content, tickets, and certificates are not published.
 - The Switch Cemu upload picker is client-side only; it scans selected file names,
   sizes, and types in the browser without uploading the files anywhere.
+- Launch Sim renders the staged Cemu file manifest in the mock game surface so
+  selected files remain visible after launch.
