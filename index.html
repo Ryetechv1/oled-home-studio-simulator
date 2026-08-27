@@ -2386,7 +2386,7 @@
                   </label>
                   <label class="cemu-field">
                     <span>Game argument</span>
-                    <input id="cemuGamePath" type="text" value="sdmc:/switch/Cemu/games/game.wua" spellcheck="false">
+                    <input id="cemuGamePath" type="text" value="sdmc:/switch/Cemu/games/The Legend of Zelda - Twilight Princess HD (US).wua" spellcheck="false">
                   </label>
                   <div class="cemu-call-grid">
                     <div class="cemu-call">
@@ -2395,12 +2395,16 @@
                     </div>
                     <div class="cemu-call">
                       <span>Resolved args</span>
-                      <strong id="cemuResolvedArgs">&quot;sdmc:/switch/Cemu/games/game.wua&quot;</strong>
+                      <strong id="cemuResolvedArgs">&quot;sdmc:/switch/Cemu/games/The Legend of Zelda - Twilight Princess HD (US).wua&quot;</strong>
                     </div>
                   </div>
                   <div class="cemu-call">
                     <span>envSetNextLoad</span>
-                    <strong id="cemuHandoffCall">envSetNextLoad(&quot;sdmc:/switch/Cemu/Cemu.nro&quot;, &quot;\&quot;sdmc:/switch/Cemu/games/game.wua\&quot;&quot;)</strong>
+                    <strong id="cemuHandoffCall">envSetNextLoad(&quot;sdmc:/switch/Cemu/Cemu.nro&quot;, &quot;\&quot;sdmc:/switch/Cemu/games/The Legend of Zelda - Twilight Princess HD (US).wua\&quot;&quot;)</strong>
+                  </div>
+                  <div class="cemu-call">
+                    <span>Abstract runtime</span>
+                    <strong id="cemuRuntimeCall">Cemu::InitializeSystem(); Cemu::LoadTitle(&quot;sdmc:/switch/Cemu/games/The Legend of Zelda - Twilight Princess HD (US).wua&quot;);</strong>
                   </div>
                 </div>
                 <div id="cemuDropzone" class="cemu-dropzone" role="button" tabindex="0" aria-label="Upload Cemu files">
@@ -2612,7 +2616,7 @@ Private: browser metadata only.</div>
       cemuFiles: [],
       cemuHandoff: {
         nroPath: "sdmc:/switch/Cemu/Cemu.nro",
-        gamePath: "sdmc:/switch/Cemu/games/game.wua"
+        gamePath: "sdmc:/switch/Cemu/games/The Legend of Zelda - Twilight Princess HD (US).wua"
       }
     };
 
@@ -3150,13 +3154,14 @@ Private: browser metadata only.</div>
         : (state.cemuHandoff.nroPath.trim() || "sdmc:/switch/Cemu/Cemu.nro");
       const gamePath = uploadedGame
         ? localUploadPath(uploadedGame)
-        : (state.cemuHandoff.gamePath.trim() || "sdmc:/switch/Cemu/games/game.wua");
+        : (state.cemuHandoff.gamePath.trim() || "sdmc:/switch/Cemu/games/The Legend of Zelda - Twilight Princess HD (US).wua");
       const args = quoteSwitchArg(gamePath);
       return {
         nroPath,
         gamePath,
         args,
-        call: `envSetNextLoad("${escapeCppString(nroPath)}", "${escapeCppString(args)}")`
+        call: `envSetNextLoad("${escapeCppString(nroPath)}", "${escapeCppString(args)}")`,
+        runtimeCall: `Cemu::InitializeSystem(); Cemu::LoadTitle("${escapeCppString(gamePath)}");`
       };
     }
 
@@ -3171,6 +3176,7 @@ Private: browser metadata only.</div>
       setCemuText("cemuResolvedNro", handoff.nroPath);
       setCemuText("cemuResolvedArgs", handoff.args);
       setCemuText("cemuHandoffCall", handoff.call);
+      setCemuText("cemuRuntimeCall", handoff.runtimeCall);
       return handoff;
     }
 
@@ -3273,11 +3279,13 @@ Private: browser metadata only.</div>
               <div class="runtime-cell"><span>Args</span><strong>${escapeHtml(handoff.args)}</strong></div>
               <div class="runtime-cell"><span>Files</span><strong>0</strong></div>
               <div class="runtime-cell"><span>Mode</span><strong>handoff sim</strong></div>
+              <div class="runtime-cell"><span>Cemu init</span><strong>Cemu::InitializeSystem()</strong></div>
+              <div class="runtime-cell"><span>Cemu title</span><strong>${escapeHtml(handoff.gamePath)}</strong></div>
             </div>
             <div class="runtime-file-list">
               <div class="runtime-empty">Use Upload Files or Folder on the Switch Cemu tile.</div>
             </div>
-            <div class="runtime-note">${escapeHtml(handoff.call)}. Browser safety mode: selected files stay local and are represented as metadata only.</div>
+            <div class="runtime-note">${escapeHtml(handoff.call)}. ${escapeHtml(handoff.runtimeCall)} Browser safety mode: selected files stay local and are represented as metadata only.</div>
           </div>
         `;
         return;
@@ -3315,9 +3323,11 @@ Private: browser metadata only.</div>
             <div class="runtime-cell"><span>Args</span><strong>${escapeHtml(handoff.args)}</strong></div>
             <div class="runtime-cell"><span>env call</span><strong>${escapeHtml(handoff.call)}</strong></div>
             <div class="runtime-cell"><span>Privacy</span><strong>metadata</strong></div>
+            <div class="runtime-cell"><span>Cemu init</span><strong>Cemu::InitializeSystem()</strong></div>
+            <div class="runtime-cell"><span>Cemu title</span><strong>${escapeHtml(handoff.gamePath)}</strong></div>
           </div>
           <div class="runtime-file-list">${rows.join("")}</div>
-          <div class="runtime-note">Launch Sim renders the staged Cemu file manifest. It does not execute binaries or upload game content.</div>
+          <div class="runtime-note">${escapeHtml(handoff.runtimeCall)} Launch Sim renders the staged Cemu file manifest. It does not execute binaries or upload game content.</div>
         </div>
       `;
     }

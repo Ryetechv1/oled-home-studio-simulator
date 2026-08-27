@@ -25,3 +25,6 @@ artifacts and local MP3 files are intentionally not included.
   selected files remain visible after launch.
 - The Cemu panel previews the foreground `envSetNextLoad` handoff path and
   quoted argument string for `sdmc:/switch/Cemu/Cemu.nro`.
+- It also displays an abstract `Cemu::InitializeSystem()` /
+  `Cemu::LoadTitle(...)` runtime plan for the selected local title path without
+  executing or uploading game content.
