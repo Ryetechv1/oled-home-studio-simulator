@@ -23,3 +23,5 @@ artifacts and local MP3 files are intentionally not included.
   sizes, and types in the browser without uploading the files anywhere.
 - Launch Sim renders the staged Cemu file manifest in the mock game surface so
   selected files remain visible after launch.
+- The Cemu panel previews the foreground `envSetNextLoad` handoff path and
+  quoted argument string for `sdmc:/switch/Cemu/Cemu.nro`.

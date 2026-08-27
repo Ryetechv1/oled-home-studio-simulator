@@ -1104,13 +1104,13 @@
     }
 
     .cemu-view .launch-art {
-      height: 72px;
-      font-size: 42px;
+      height: 56px;
+      font-size: 34px;
     }
 
     .cemu-view .launch-title {
       margin-top: 0;
-      font-size: 26px;
+      font-size: 24px;
     }
 
     .cemu-view .launch-path {
@@ -1134,17 +1134,89 @@
       padding: 8px 10px;
     }
 
+    .cemu-handoff {
+      margin-top: 8px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px;
+      padding: 8px;
+      border: 1px solid rgba(255, 159, 170, 0.2);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 44%),
+        rgba(4, 8, 15, 0.68);
+    }
+
+    .cemu-field,
+    .cemu-call {
+      min-width: 0;
+      display: grid;
+      gap: 5px;
+    }
+
+    .cemu-field span,
+    .cemu-call span {
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .cemu-field input {
+      width: 100%;
+      min-height: 28px;
+      padding: 6px 9px;
+      border: 1px solid rgba(255, 159, 170, 0.24);
+      background: rgba(7, 11, 18, 0.82);
+      color: #ffffff;
+      font: 800 11px Consolas, "Lucida Console", monospace;
+      outline: none;
+    }
+
+    .cemu-field input:focus-visible {
+      border-color: rgba(20, 184, 255, 0.74);
+      box-shadow: 0 0 0 2px rgba(20, 184, 255, 0.16);
+    }
+
+    .cemu-call {
+      grid-column: 1 / -1;
+      min-height: 28px;
+      padding: 6px 9px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(12, 16, 25, 0.68);
+    }
+
+    .cemu-call strong {
+      display: block;
+      min-width: 0;
+      color: #ffc9d0;
+      font: 800 11px Consolas, "Lucida Console", monospace;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .cemu-call-grid {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .cemu-call-grid .cemu-call {
+      grid-column: auto;
+    }
+
     .cemu-actions {
       margin-top: 8px;
     }
 
     .cemu-dropzone {
-      margin-top: 8px;
+      margin-top: 6px;
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto;
       align-items: center;
       gap: 10px;
-      padding: 10px;
+      padding: 8px;
       border: 1px dashed rgba(255, 159, 170, 0.58);
       background:
         linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 44%),
@@ -1163,16 +1235,19 @@
 
     .cemu-drop-title {
       color: #ffffff;
-      font-size: 15px;
+      font-size: 13px;
       font-weight: 900;
     }
 
     .cemu-drop-copy {
-      margin-top: 5px;
+      margin-top: 4px;
       color: var(--muted);
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 800;
       line-height: 1.35;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .cemu-upload-list {
@@ -1263,8 +1338,8 @@
     }
 
     .cemu-view .manifest-row {
-      min-height: 50px;
-      padding: 8px 10px;
+      min-height: 44px;
+      padding: 7px 9px;
     }
 
     .manifest-value {
@@ -1861,6 +1936,8 @@
       .contract-grid,
       .launch-grid,
       .cemu-manifest,
+      .cemu-handoff,
+      .cemu-call-grid,
       .gallery-strip {
         grid-template-columns: 1fr;
       }
@@ -2302,12 +2379,37 @@
                     <strong>browser only</strong>
                   </div>
                 </div>
+                <div class="cemu-handoff" aria-label="Cemu foreground handoff">
+                  <label class="cemu-field">
+                    <span>Cemu NRO</span>
+                    <input id="cemuNroPath" type="text" value="sdmc:/switch/Cemu/Cemu.nro" spellcheck="false">
+                  </label>
+                  <label class="cemu-field">
+                    <span>Game argument</span>
+                    <input id="cemuGamePath" type="text" value="sdmc:/switch/Cemu/games/game.wua" spellcheck="false">
+                  </label>
+                  <div class="cemu-call-grid">
+                    <div class="cemu-call">
+                      <span>Resolved NRO</span>
+                      <strong id="cemuResolvedNro">sdmc:/switch/Cemu/Cemu.nro</strong>
+                    </div>
+                    <div class="cemu-call">
+                      <span>Resolved args</span>
+                      <strong id="cemuResolvedArgs">&quot;sdmc:/switch/Cemu/games/game.wua&quot;</strong>
+                    </div>
+                  </div>
+                  <div class="cemu-call">
+                    <span>envSetNextLoad</span>
+                    <strong id="cemuHandoffCall">envSetNextLoad(&quot;sdmc:/switch/Cemu/Cemu.nro&quot;, &quot;\&quot;sdmc:/switch/Cemu/games/game.wua\&quot;&quot;)</strong>
+                  </div>
+                </div>
                 <div id="cemuDropzone" class="cemu-dropzone" role="button" tabindex="0" aria-label="Upload Cemu files">
                   <div>
                     <div class="cemu-drop-title">Drop Cemu files here</div>
                     <div class="cemu-drop-copy">Scans names, sizes, and file types in your browser. Nothing is sent to GitHub Pages.</div>
                   </div>
                   <div class="button-row">
+                    <button id="cemuLaunchButton" class="control-btn" type="button">Launch Sim</button>
                     <button id="cemuUploadButton" class="control-btn" type="button">Upload Files</button>
                     <button id="cemuFolderButton" class="control-btn" type="button">Folder</button>
                     <button id="cemuClearButton" class="control-btn" type="button">Clear</button>
@@ -2317,7 +2419,6 @@
                 <input id="cemuFolderInput" class="hidden-input" type="file" multiple webkitdirectory directory>
                 <div id="cemuUploadList" class="cemu-upload-list" aria-live="polite"></div>
                 <div class="button-row cemu-actions">
-                  <button id="cemuLaunchButton" class="control-btn" type="button">Launch Sim</button>
                   <button id="cemuDnsButton" class="control-btn" type="button">DNS</button>
                   <button id="cemuFilesButton" class="control-btn" type="button">Files</button>
                 </div>
@@ -2508,7 +2609,11 @@ Private: browser metadata only.</div>
       playing: false,
       audioReady: false,
       commandCount: 0,
-      cemuFiles: []
+      cemuFiles: [],
+      cemuHandoff: {
+        nroPath: "sdmc:/switch/Cemu/Cemu.nro",
+        gamePath: "sdmc:/switch/Cemu/games/game.wua"
+      }
     };
 
     const tracks = [
@@ -2541,6 +2646,8 @@ Private: browser metadata only.</div>
     const cemuLaunchPath = document.getElementById("cemuLaunchPath");
     const cemuFileInput = document.getElementById("cemuFileInput");
     const cemuFolderInput = document.getElementById("cemuFolderInput");
+    const cemuNroPath = document.getElementById("cemuNroPath");
+    const cemuGamePath = document.getElementById("cemuGamePath");
     const gameTitle = document.getElementById("gameTitle");
     const gameField = document.getElementById("gameField");
 
@@ -3019,6 +3126,54 @@ Private: browser metadata only.</div>
       })[0];
     }
 
+    function firstCemuFileByKinds(kinds) {
+      return state.cemuFiles.find((file) => kinds.includes(file.kind));
+    }
+
+    function localUploadPath(file) {
+      return `local-upload:/${file.path}`;
+    }
+
+    function quoteSwitchArg(path) {
+      return `"${String(path).replace(/\\/g, "\\\\").replace(/"/g, "\\\"")}"`;
+    }
+
+    function escapeCppString(value) {
+      return String(value).replace(/\\/g, "\\\\").replace(/"/g, "\\\"");
+    }
+
+    function cemuHandoffSpec() {
+      const uploadedNro = firstCemuFileByKinds(["NRO app"]);
+      const uploadedGame = firstCemuFileByKinds(["WUA archive", "WUX image", "WUD image", "RPX executable"]);
+      const nroPath = uploadedNro
+        ? localUploadPath(uploadedNro)
+        : (state.cemuHandoff.nroPath.trim() || "sdmc:/switch/Cemu/Cemu.nro");
+      const gamePath = uploadedGame
+        ? localUploadPath(uploadedGame)
+        : (state.cemuHandoff.gamePath.trim() || "sdmc:/switch/Cemu/games/game.wua");
+      const args = quoteSwitchArg(gamePath);
+      return {
+        nroPath,
+        gamePath,
+        args,
+        call: `envSetNextLoad("${escapeCppString(nroPath)}", "${escapeCppString(args)}")`
+      };
+    }
+
+    function renderCemuHandoff() {
+      const handoff = cemuHandoffSpec();
+      if (cemuNroPath && document.activeElement !== cemuNroPath) {
+        cemuNroPath.value = state.cemuHandoff.nroPath;
+      }
+      if (cemuGamePath && document.activeElement !== cemuGamePath) {
+        cemuGamePath.value = state.cemuHandoff.gamePath;
+      }
+      setCemuText("cemuResolvedNro", handoff.nroPath);
+      setCemuText("cemuResolvedArgs", handoff.args);
+      setCemuText("cemuHandoffCall", handoff.call);
+      return handoff;
+    }
+
     function setCemuText(id, value) {
       const element = document.getElementById(id);
       if (element) {
@@ -3048,6 +3203,7 @@ Private: browser metadata only.</div>
       const primary = primaryCemuFile();
       const primaryLabel = primary ? primary.name : "none";
       const sidePrimary = primary ? primary.kind : "none";
+      const handoff = renderCemuHandoff();
 
       setCemuText("cemuSideCount", String(count));
       setCemuText("cemuSideTotal", formatBytes(totalBytes));
@@ -3061,6 +3217,7 @@ Private: browser metadata only.</div>
         cemuUploadList.innerHTML = '<div class="cemu-upload-empty">No local files selected yet.</div>';
         cemuLog.textContent = [
           message || "Waiting for local Cemu files.",
+          `Handoff: ${handoff.call}`,
           "Private: browser metadata only."
         ].join("\n");
         return;
@@ -3081,7 +3238,8 @@ Private: browser metadata only.</div>
       cemuUploadList.innerHTML = visibleFiles.join("");
       cemuLog.textContent = [
         message || `${count} local file${count === 1 ? "" : "s"} staged.`,
-        `Primary: ${primary.kind} - ${primary.name}`
+        `Primary: ${primary.kind} - ${primary.name}`,
+        `Handoff: ${handoff.call}`
       ].join("\n");
     }
 
@@ -3095,6 +3253,7 @@ Private: browser metadata only.</div>
       const count = state.cemuFiles.length;
       const totalBytes = state.cemuFiles.reduce((sum, file) => sum + file.size, 0);
       const primary = primaryCemuFile();
+      const handoff = renderCemuHandoff();
       gameTitle.textContent = count > 0 ? "Switch Cemu Launch Sim" : "Switch Cemu Preview";
       gameField.classList.add("cemu-runtime-field");
 
@@ -3109,11 +3268,16 @@ Private: browser metadata only.</div>
               </div>
               <div class="runtime-badge">WAITING</div>
             </div>
-            <div class="runtime-empty">Launch Sim is ready, but no local package metadata is available yet.</div>
+            <div class="runtime-grid">
+              <div class="runtime-cell"><span>NRO</span><strong>${escapeHtml(handoff.nroPath)}</strong></div>
+              <div class="runtime-cell"><span>Args</span><strong>${escapeHtml(handoff.args)}</strong></div>
+              <div class="runtime-cell"><span>Files</span><strong>0</strong></div>
+              <div class="runtime-cell"><span>Mode</span><strong>handoff sim</strong></div>
+            </div>
             <div class="runtime-file-list">
               <div class="runtime-empty">Use Upload Files or Folder on the Switch Cemu tile.</div>
             </div>
-            <div class="runtime-note">Browser safety mode: selected files stay local and are represented as metadata only.</div>
+            <div class="runtime-note">${escapeHtml(handoff.call)}. Browser safety mode: selected files stay local and are represented as metadata only.</div>
           </div>
         `;
         return;
@@ -3146,7 +3310,11 @@ Private: browser metadata only.</div>
             <div class="runtime-cell"><span>Primary</span><strong>${escapeHtml(primary.kind)}</strong></div>
             <div class="runtime-cell"><span>Files</span><strong>${count}</strong></div>
             <div class="runtime-cell"><span>Total</span><strong>${formatBytes(totalBytes)}</strong></div>
-            <div class="runtime-cell"><span>Mode</span><strong>metadata</strong></div>
+            <div class="runtime-cell"><span>Mode</span><strong>handoff sim</strong></div>
+            <div class="runtime-cell"><span>NRO</span><strong>${escapeHtml(handoff.nroPath)}</strong></div>
+            <div class="runtime-cell"><span>Args</span><strong>${escapeHtml(handoff.args)}</strong></div>
+            <div class="runtime-cell"><span>env call</span><strong>${escapeHtml(handoff.call)}</strong></div>
+            <div class="runtime-cell"><span>Privacy</span><strong>metadata</strong></div>
           </div>
           <div class="runtime-file-list">${rows.join("")}</div>
           <div class="runtime-note">Launch Sim renders the staged Cemu file manifest. It does not execute binaries or upload game content.</div>
@@ -3408,11 +3576,22 @@ Private: browser metadata only.</div>
         handleCemuFiles(event.target.files);
         event.target.value = "";
       });
+      cemuNroPath.addEventListener("input", () => {
+        state.cemuHandoff.nroPath = cemuNroPath.value;
+        renderCemu("Cemu NRO path updated.");
+      });
+      cemuGamePath.addEventListener("input", () => {
+        state.cemuHandoff.gamePath = cemuGamePath.value;
+        renderCemu("Cemu argument path updated.");
+      });
 
-      document.getElementById("cemuLaunchButton").addEventListener("click", () => {
+      document.getElementById("cemuLaunchButton").addEventListener("click", (event) => {
+        event.stopPropagation();
+        const handoff = cemuHandoffSpec();
         renderCemuLaunchSim();
         cemuLog.textContent = [
           state.cemuFiles.length > 0 ? "Launch sim rendered staged files." : "Launch sim opened with no files staged.",
+          `Next load: ${handoff.call}`,
           "No binary or game package is loaded by the public webapp."
         ].join("\n");
         showView("game");
