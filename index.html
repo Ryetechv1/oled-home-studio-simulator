@@ -693,7 +693,7 @@
 
     .tile-grid {
       display: grid;
-      grid-template-columns: repeat(6, minmax(0, 1fr));
+      grid-template-columns: repeat(7, minmax(0, 1fr));
       grid-auto-rows: minmax(148px, 1fr);
       gap: 12px;
       min-height: 0;
@@ -784,6 +784,7 @@
     .studio-view.active,
     .hud-view.active,
     .build-view.active,
+    .dns-view.active,
     .gallery-view.active {
       display: grid;
       grid-template-columns: 292px minmax(0, 1fr);
@@ -800,6 +801,8 @@
     .preview-panel,
     .studio-tools,
     .sim-game,
+    .dns-browser,
+    .dns-frame-shell,
     .gallery-strip {
       border: 1px solid rgba(255, 153, 164, 0.34);
       background: rgba(5, 8, 14, 0.68);
@@ -1016,6 +1019,72 @@
       padding: 14px;
       font: 800 12px/1.55 Consolas, "Lucida Console", monospace;
       overflow: auto;
+    }
+
+    .dns-browser {
+      min-height: 0;
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      gap: 11px;
+      padding: 14px;
+      overflow: hidden;
+    }
+
+    .dns-toolbar {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto auto;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .dns-input {
+      min-width: 0;
+      height: 34px;
+      border: 1px solid rgba(255, 159, 170, 0.44);
+      border-radius: 7px;
+      background: rgba(2, 6, 12, 0.78);
+      color: #fff1f3;
+      padding: 0 12px;
+      outline: 0;
+      font: 800 12px Consolas, "Lucida Console", monospace;
+    }
+
+    .dns-input:focus {
+      border-color: rgba(20, 184, 255, 0.76);
+      box-shadow: 0 0 0 2px rgba(20, 184, 255, 0.18);
+    }
+
+    .dns-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .dns-frame-shell {
+      min-height: 0;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 18%),
+        rgba(2, 6, 12, 0.82);
+    }
+
+    .dns-frame {
+      width: 100%;
+      height: 100%;
+      min-height: 260px;
+      display: block;
+      border: 0;
+      background: #05070b;
+    }
+
+    .dns-status {
+      min-height: 20px;
+      color: #9bdcff;
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .studio-tools {
@@ -1429,6 +1498,7 @@
       .files-view.active,
       .studio-view.active,
       .hud-view.active,
+      .dns-view.active,
       .build-view.active {
         grid-template-columns: 1fr;
         overflow: auto;
@@ -1667,6 +1737,37 @@
               </article>
             </section>
 
+            <section id="dnsView" class="view dns-view" aria-label="DNS Internet">
+              <aside class="side-panel">
+                <h2 class="panel-title">DNS Internet</h2>
+                <div class="panel-kicker">Portal browser profile</div>
+                <div class="side-meta">
+                  <div class="metric"><span>Primary</span><strong>045.055.142.122</strong></div>
+                  <div class="metric"><span>Secondary</span><strong>001.000.000.001</strong></div>
+                  <div class="metric"><span>Normalized</span><strong>45.55 / 1.0</strong></div>
+                  <div class="metric"><span>Mode</span><strong>simulated</strong></div>
+                </div>
+              </aside>
+              <article class="dns-browser">
+                <div class="dns-toolbar">
+                  <input id="dnsAddress" class="dns-input" type="text" value="portal://home" aria-label="DNS browser address">
+                  <button id="dnsGoButton" class="control-btn" type="button">Go</button>
+                  <button id="dnsPopoutButton" class="control-btn" type="button">New Tab</button>
+                </div>
+                <div class="dns-links" aria-label="DNS browser presets">
+                  <button class="pill-btn active" type="button" data-dns-preset="home">Portal</button>
+                  <button class="pill-btn" type="button" data-dns-preset="search">Search</button>
+                  <button class="pill-btn" type="button" data-dns-url="https://github.com/Ryetechv1/oled-home-studio-simulator">Repo</button>
+                  <button class="pill-btn" type="button" data-dns-url="https://ryetechv1.github.io/oled-home-studio-simulator/">Live</button>
+                  <button class="pill-btn" type="button" data-dns-url="https://switchbrew.org/wiki/Main_Page">Switchbrew</button>
+                </div>
+                <div class="dns-frame-shell">
+                  <iframe id="dnsFrame" class="dns-frame" title="DNS browser frame" sandbox="allow-forms allow-popups allow-popups-to-escape-sandbox allow-scripts allow-same-origin"></iframe>
+                </div>
+                <div id="dnsStatus" class="dns-status">DNS portal ready.</div>
+              </article>
+            </section>
+
             <section id="gameView" class="view game-view" aria-label="Game simulation">
               <article class="sim-game">
                 <div class="game-title">Game Running</div>
@@ -1727,9 +1828,9 @@
       { label: "Paint", path: "sdmc:/switch/paint/paint.nro", type: "NRO TILE", accent: "#be123c", route: "launch", initial: "P" },
       { label: "Files", path: "sdmc:/switch/files/files.nro", type: "PROJECT VIEW", accent: "#ff8a5c", route: "files", initial: "F" },
       { label: "Music", path: "sdmc:/switch/TriPlayer/TriPlayer.nro", type: "TRIPLAYER", accent: "#ff374b", route: "hud", initial: "M" },
+      { label: "DNS", path: "dns://045.055.142.122", type: "WEB PORTAL", accent: "#ff6b6b", route: "dns", initial: "D" },
       { label: "Studio", path: "sdmc:/switch/oled_home_studio/oled_home_studio.nro", type: "THEME TOOL", accent: "#14b8ff", route: "studio", initial: "S" },
-      { label: "Build", path: "mp3_hud/Build-Sysmode.ps1", type: "SIM BUILD", accent: "#a3e635", route: "build", initial: "B" },
-      { label: "Mockups", path: "mockups/*.png", type: "GALLERY", accent: "#f8c45c", route: "gallery", initial: "M" }
+      { label: "Build", path: "mp3_hud/Build-Sysmode.ps1", type: "SIM BUILD", accent: "#a3e635", route: "build", initial: "B" }
     ];
 
     const projectFiles = [
@@ -1823,6 +1924,7 @@
       studio: document.getElementById("studioView"),
       hud: document.getElementById("hudView"),
       build: document.getElementById("buildView"),
+      dns: document.getElementById("dnsView"),
       game: document.getElementById("gameView"),
       gallery: document.getElementById("galleryView")
     };
@@ -1860,6 +1962,16 @@
     const selectedFileType = document.getElementById("selectedFileType");
     const buildLog = document.getElementById("buildLog");
     const buildProgress = document.getElementById("buildProgress");
+    const dnsAddress = document.getElementById("dnsAddress");
+    const dnsFrame = document.getElementById("dnsFrame");
+    const dnsStatus = document.getElementById("dnsStatus");
+
+    const dnsProfile = {
+      primary: "045.055.142.122",
+      secondary: "001.000.000.001",
+      normalizedPrimary: "45.55.142.122",
+      normalizedSecondary: "1.0.0.1"
+    };
 
     function setClock() {
       const now = new Date();
@@ -1875,6 +1987,7 @@
         case "studio": return ["OLED STUDIO", "THEME AND IMPORT VIEW"];
         case "hud": return ["MP3 HUD", "AUDIO COMMAND SIMULATOR"];
         case "build": return ["BUILD", "SYSMODE SHIM OUTPUT"];
+        case "dns": return ["DNS INTERNET", "045.055.142.122 / 001.000.000.001"];
         case "game": return ["RUNNING TITLE", "HUD REMAINS VISIBLE IN SIM"];
         case "gallery": return ["MOCKUPS", "RED GLASS UI SET"];
         case "launch": return ["TILE TARGET", "LAUNCH PREVIEW"];
@@ -1943,6 +2056,9 @@
       }
       if (tile.route === "build") {
         buildProgress.style.transform = "scaleX(0.12)";
+      }
+      if (tile.route === "dns") {
+        renderDns();
       }
       showView(tile.route);
       statusLine.textContent = `${tile.label} opened.`;
@@ -2041,6 +2157,160 @@
         "Transport: local_command_queue",
         "privileged=false backgroundAudio=false"
       ].join("\n");
+    }
+
+    function portalHtml(kind) {
+      const pages = {
+        home: {
+          title: "DNS Portal",
+          subtitle: "045.055.142.122",
+          body: [
+            "Primary DNS profile is active in this simulator.",
+            `Primary: ${dnsProfile.primary} -> ${dnsProfile.normalizedPrimary}`,
+            `Secondary: ${dnsProfile.secondary} -> ${dnsProfile.normalizedSecondary}`,
+            "Portal routing: local pages, URLs, and search terms."
+          ]
+        },
+        search: {
+          title: "Portal Search",
+          subtitle: "Local resolver",
+          body: [
+            "Query route: DuckDuckGo frame target.",
+            "Search terms route to DuckDuckGo in the browser frame.",
+            "External pages may request a new tab when frame loading is blocked."
+          ]
+        },
+        blocked: {
+          title: "Frame Blocked",
+          subtitle: "Open in new tab",
+          body: [
+            "Some websites block embedded browsing.",
+            "The New Tab button keeps the simulated DNS profile while opening the target normally."
+          ]
+        }
+      };
+      const page = pages[kind] || pages.home;
+      return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 28px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0 20px, transparent 20px),
+        radial-gradient(circle at 78% 22%, rgba(20, 184, 255, 0.18), transparent 28%),
+        linear-gradient(135deg, #12030a, #05070b 58%, #160611);
+      color: #f8fafc;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    .mark {
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255, 196, 204, 0.48);
+      background: linear-gradient(135deg, #ff374b, #5c0718);
+      font-weight: 900;
+    }
+    h1 {
+      margin: 18px 0 0;
+      font-size: 32px;
+      line-height: 1;
+    }
+    .subtitle {
+      margin-top: 9px;
+      color: #9bdcff;
+      font-size: 13px;
+      font-weight: 900;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 24px;
+    }
+    .cell {
+      min-height: 72px;
+      border: 1px solid rgba(255, 159, 170, 0.32);
+      background: rgba(7, 10, 16, 0.68);
+      padding: 14px;
+      font-size: 13px;
+      line-height: 1.45;
+      font-weight: 800;
+    }
+    @media (max-width: 520px) {
+      .grid { grid-template-columns: 1fr; }
+      body { padding: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="mark">DNS</div>
+  <h1>${page.title}</h1>
+  <div class="subtitle">${page.subtitle}</div>
+  <div class="grid">${page.body.map((item) => `<div class="cell">${item}</div>`).join("")}</div>
+</body>
+</html>`;
+    }
+
+    function setDnsPreset(kind) {
+      dnsFrame.removeAttribute("src");
+      dnsFrame.srcdoc = portalHtml(kind);
+      dnsAddress.value = `portal://${kind}`;
+      dnsStatus.textContent = `Loaded portal://${kind} through primary DNS ${dnsProfile.primary}.`;
+    }
+
+    function resolveDnsInput(rawValue) {
+      const raw = rawValue.trim();
+      if (!raw) {
+        return { kind: "portal", value: "home" };
+      }
+      if (raw.startsWith("portal://")) {
+        return { kind: "portal", value: raw.replace("portal://", "") || "home" };
+      }
+      if (/^https?:\/\//i.test(raw)) {
+        return { kind: "url", value: raw };
+      }
+      if (/^[a-z0-9.-]+\.[a-z]{2,}(\/.*)?$/i.test(raw)) {
+        return { kind: "url", value: `https://${raw}` };
+      }
+      return {
+        kind: "url",
+        value: `https://duckduckgo.com/?q=${encodeURIComponent(raw)}`
+      };
+    }
+
+    function browseDnsAddress() {
+      const resolved = resolveDnsInput(dnsAddress.value);
+      if (resolved.kind === "portal") {
+        setDnsPreset(resolved.value);
+        return;
+      }
+      dnsFrame.removeAttribute("srcdoc");
+      dnsFrame.src = resolved.value;
+      dnsAddress.value = resolved.value;
+      dnsStatus.textContent = `Routing ${resolved.value} with primary ${dnsProfile.primary}.`;
+    }
+
+    function openDnsPopout() {
+      const resolved = resolveDnsInput(dnsAddress.value);
+      if (resolved.kind === "portal") {
+        setDnsPreset(resolved.value);
+        return;
+      }
+      window.open(resolved.value, "_blank", "noopener,noreferrer");
+      dnsStatus.textContent = `Opened ${resolved.value} in a new tab.`;
+    }
+
+    function renderDns() {
+      if (!dnsFrame.src && !dnsFrame.srcdoc) {
+        setDnsPreset("home");
+      }
     }
 
     function selectRelative(offset) {
@@ -2144,7 +2414,7 @@
       }
 
       if (imported.length > 0) {
-        tiles = imported.concat(tiles.filter((tile) => ["Studio", "Build", "Mockups"].includes(tile.label)));
+        tiles = imported.concat(tiles.filter((tile) => ["DNS", "Studio", "Build"].includes(tile.label)));
         state.selectedTile = 0;
         renderHome();
         renderMiniTiles();
@@ -2221,6 +2491,29 @@
         });
       });
 
+      document.getElementById("dnsGoButton").addEventListener("click", browseDnsAddress);
+      document.getElementById("dnsPopoutButton").addEventListener("click", openDnsPopout);
+      dnsAddress.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          browseDnsAddress();
+        }
+      });
+      document.querySelectorAll("[data-dns-preset]").forEach((button) => {
+        button.addEventListener("click", () => {
+          document.querySelectorAll("[data-dns-preset], [data-dns-url]").forEach((item) => item.classList.remove("active"));
+          button.classList.add("active");
+          setDnsPreset(button.dataset.dnsPreset);
+        });
+      });
+      document.querySelectorAll("[data-dns-url]").forEach((button) => {
+        button.addEventListener("click", () => {
+          document.querySelectorAll("[data-dns-preset], [data-dns-url]").forEach((item) => item.classList.remove("active"));
+          button.classList.add("active");
+          dnsAddress.value = button.dataset.dnsUrl;
+          browseDnsAddress();
+        });
+      });
+
       document.querySelectorAll("[data-audio]").forEach((button) => {
         button.addEventListener("click", () => {
           const action = button.dataset.audio;
@@ -2292,8 +2585,20 @@
     renderFiles();
     renderMiniTiles();
     renderHudLog("Queue ready.");
+    renderDns();
     updateAudioHud();
     wireInputs();
+
+    const initialView = new URLSearchParams(window.location.search).get("view");
+    if (initialView === "dns") {
+      const dnsIndex = tiles.findIndex((tile) => tile.route === "dns");
+      if (dnsIndex >= 0) {
+        state.selectedTile = dnsIndex;
+      }
+      renderDns();
+      showView("dns");
+      statusLine.textContent = "DNS Internet opened.";
+    }
   </script>
 </body>
 </html>
