@@ -12,5 +12,5 @@ artifacts and local MP3 files are intentionally not included.
 - Use `B` / `Esc` to return home.
 - Use `Space` or the top-right HUD buttons to toggle music.
 - Import your own wallpaper, music file, or config from the Studio tile.
-- Open the DNS tile for the simulated portal browser profile using primary DNS
-  `045.055.142.122` and secondary DNS `001.000.000.001`.
+- Open the DNS tile for the simulated SwitchBru DNS browser profile at
+  `https://dns.switchbru.com/`.

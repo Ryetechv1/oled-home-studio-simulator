@@ -1742,24 +1742,24 @@
                 <h2 class="panel-title">DNS Internet</h2>
                 <div class="panel-kicker">Portal browser profile</div>
                 <div class="side-meta">
-                  <div class="metric"><span>Primary</span><strong>045.055.142.122</strong></div>
-                  <div class="metric"><span>Secondary</span><strong>001.000.000.001</strong></div>
-                  <div class="metric"><span>Normalized</span><strong>45.55 / 1.0</strong></div>
+                  <div class="metric"><span>Portal</span><strong>SwitchBru</strong></div>
+                  <div class="metric"><span>Host</span><strong>dns.switchbru.com</strong></div>
+                  <div class="metric"><span>Fallback</span><strong>New Tab</strong></div>
                   <div class="metric"><span>Mode</span><strong>simulated</strong></div>
                 </div>
               </aside>
               <article class="dns-browser">
                 <div class="dns-toolbar">
-                  <input id="dnsAddress" class="dns-input" type="text" value="portal://home" aria-label="DNS browser address">
+                  <input id="dnsAddress" class="dns-input" type="text" value="https://dns.switchbru.com/" aria-label="DNS browser address">
                   <button id="dnsGoButton" class="control-btn" type="button">Go</button>
                   <button id="dnsPopoutButton" class="control-btn" type="button">New Tab</button>
                 </div>
                 <div class="dns-links" aria-label="DNS browser presets">
-                  <button class="pill-btn active" type="button" data-dns-preset="home">Portal</button>
+                  <button class="pill-btn active" type="button" data-dns-url="https://dns.switchbru.com/">SwitchBru</button>
+                  <button class="pill-btn" type="button" data-dns-preset="home">Local</button>
                   <button class="pill-btn" type="button" data-dns-preset="search">Search</button>
                   <button class="pill-btn" type="button" data-dns-url="https://github.com/Ryetechv1/oled-home-studio-simulator">Repo</button>
                   <button class="pill-btn" type="button" data-dns-url="https://ryetechv1.github.io/oled-home-studio-simulator/">Live</button>
-                  <button class="pill-btn" type="button" data-dns-url="https://switchbrew.org/wiki/Main_Page">Switchbrew</button>
                 </div>
                 <div class="dns-frame-shell">
                   <iframe id="dnsFrame" class="dns-frame" title="DNS browser frame" sandbox="allow-forms allow-popups allow-popups-to-escape-sandbox allow-scripts allow-same-origin"></iframe>
@@ -1828,7 +1828,7 @@
       { label: "Paint", path: "sdmc:/switch/paint/paint.nro", type: "NRO TILE", accent: "#be123c", route: "launch", initial: "P" },
       { label: "Files", path: "sdmc:/switch/files/files.nro", type: "PROJECT VIEW", accent: "#ff8a5c", route: "files", initial: "F" },
       { label: "Music", path: "sdmc:/switch/TriPlayer/TriPlayer.nro", type: "TRIPLAYER", accent: "#ff374b", route: "hud", initial: "M" },
-      { label: "DNS", path: "dns://045.055.142.122", type: "WEB PORTAL", accent: "#ff6b6b", route: "dns", initial: "D" },
+      { label: "DNS", path: "https://dns.switchbru.com/", type: "SWITCHBRU", accent: "#ff6b6b", route: "dns", initial: "D" },
       { label: "Studio", path: "sdmc:/switch/oled_home_studio/oled_home_studio.nro", type: "THEME TOOL", accent: "#14b8ff", route: "studio", initial: "S" },
       { label: "Build", path: "mp3_hud/Build-Sysmode.ps1", type: "SIM BUILD", accent: "#a3e635", route: "build", initial: "B" }
     ];
@@ -1967,10 +1967,9 @@
     const dnsStatus = document.getElementById("dnsStatus");
 
     const dnsProfile = {
-      primary: "045.055.142.122",
-      secondary: "001.000.000.001",
-      normalizedPrimary: "45.55.142.122",
-      normalizedSecondary: "1.0.0.1"
+      portalUrl: "https://dns.switchbru.com/",
+      portalHost: "dns.switchbru.com",
+      label: "SwitchBru DNS"
     };
 
     function setClock() {
@@ -1987,7 +1986,7 @@
         case "studio": return ["OLED STUDIO", "THEME AND IMPORT VIEW"];
         case "hud": return ["MP3 HUD", "AUDIO COMMAND SIMULATOR"];
         case "build": return ["BUILD", "SYSMODE SHIM OUTPUT"];
-        case "dns": return ["DNS INTERNET", "045.055.142.122 / 001.000.000.001"];
+        case "dns": return ["DNS INTERNET", "SWITCHBRU DNS PORTAL"];
         case "game": return ["RUNNING TITLE", "HUD REMAINS VISIBLE IN SIM"];
         case "gallery": return ["MOCKUPS", "RED GLASS UI SET"];
         case "launch": return ["TILE TARGET", "LAUNCH PREVIEW"];
@@ -2162,12 +2161,12 @@
     function portalHtml(kind) {
       const pages = {
         home: {
-          title: "DNS Portal",
-          subtitle: "045.055.142.122",
+          title: "SwitchBru DNS",
+          subtitle: "dns.switchbru.com",
           body: [
-            "Primary DNS profile is active in this simulator.",
-            `Primary: ${dnsProfile.primary} -> ${dnsProfile.normalizedPrimary}`,
-            `Secondary: ${dnsProfile.secondary} -> ${dnsProfile.normalizedSecondary}`,
+            "SwitchBru portal profile is active in this simulator.",
+            `Portal: ${dnsProfile.portalUrl}`,
+            `Host: ${dnsProfile.portalHost}`,
             "Portal routing: local pages, URLs, and search terms."
           ]
         },
@@ -2262,7 +2261,7 @@
       dnsFrame.removeAttribute("src");
       dnsFrame.srcdoc = portalHtml(kind);
       dnsAddress.value = `portal://${kind}`;
-      dnsStatus.textContent = `Loaded portal://${kind} through primary DNS ${dnsProfile.primary}.`;
+      dnsStatus.textContent = `Loaded portal://${kind} with ${dnsProfile.label}.`;
     }
 
     function resolveDnsInput(rawValue) {
@@ -2294,7 +2293,7 @@
       dnsFrame.removeAttribute("srcdoc");
       dnsFrame.src = resolved.value;
       dnsAddress.value = resolved.value;
-      dnsStatus.textContent = `Routing ${resolved.value} with primary ${dnsProfile.primary}.`;
+      dnsStatus.textContent = `Routing ${resolved.value} with ${dnsProfile.label}.`;
     }
 
     function openDnsPopout() {
@@ -2309,7 +2308,8 @@
 
     function renderDns() {
       if (!dnsFrame.src && !dnsFrame.srcdoc) {
-        setDnsPreset("home");
+        dnsAddress.value = dnsProfile.portalUrl;
+        browseDnsAddress();
       }
     }
 
