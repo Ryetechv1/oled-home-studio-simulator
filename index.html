@@ -785,6 +785,7 @@
     .hud-view.active,
     .build-view.active,
     .dns-view.active,
+    .cemu-view.active,
     .gallery-view.active {
       display: grid;
       grid-template-columns: 292px minmax(0, 1fr);
@@ -803,6 +804,7 @@
     .sim-game,
     .dns-browser,
     .dns-frame-shell,
+    .cemu-manifest,
     .gallery-strip {
       border: 1px solid rgba(255, 153, 164, 0.34);
       background: rgba(5, 8, 14, 0.68);
@@ -1081,6 +1083,70 @@
       min-height: 20px;
       color: #9bdcff;
       font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .cemu-manifest {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      padding: 14px;
+    }
+
+    .cemu-view .launch-art {
+      height: 96px;
+      font-size: 56px;
+    }
+
+    .cemu-view .launch-title {
+      margin-top: 12px;
+      font-size: 28px;
+    }
+
+    .cemu-view .launch-path {
+      margin-top: 7px;
+      font-size: 12px;
+    }
+
+    .cemu-view .cemu-manifest {
+      margin-top: 12px;
+      gap: 10px;
+      padding: 12px;
+    }
+
+    .cemu-view .codebox {
+      min-height: 48px;
+      max-height: 58px;
+      overflow: auto;
+      font-size: 11px;
+      line-height: 1.35;
+      padding: 10px 12px;
+    }
+
+    .cemu-actions {
+      margin-top: 12px;
+    }
+
+    .manifest-row {
+      min-height: 62px;
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      background: rgba(16, 21, 31, 0.72);
+      padding: 12px;
+    }
+
+    .cemu-view .manifest-row {
+      min-height: 50px;
+      padding: 10px 12px;
+    }
+
+    .manifest-value {
+      margin-top: 8px;
+      color: #ffffff;
+      font-size: 16px;
       font-weight: 900;
       white-space: nowrap;
       overflow: hidden;
@@ -1499,6 +1565,7 @@
       .studio-view.active,
       .hud-view.active,
       .dns-view.active,
+      .cemu-view.active,
       .build-view.active {
         grid-template-columns: 1fr;
         overflow: auto;
@@ -1507,6 +1574,7 @@
       .file-shell,
       .contract-grid,
       .launch-grid,
+      .cemu-manifest,
       .gallery-strip {
         grid-template-columns: 1fr;
       }
@@ -1522,6 +1590,105 @@
         bottom: -42px;
         min-height: 30px;
         transform: translateX(-50%) scale(0.82);
+      }
+    }
+
+    @media (max-width: 520px) {
+      body {
+        min-height: 100vh;
+        padding: 10px 8px 58px;
+      }
+
+      .stage {
+        width: min(100%, 430px);
+        height: min(786px, calc(100vh - 76px));
+        min-height: 680px;
+        aspect-ratio: auto;
+      }
+
+      .stage::before {
+        inset: -8px;
+        border-radius: 28px;
+      }
+
+      .switch {
+        position: relative;
+        height: 100%;
+        border-radius: 28px;
+        padding: 10px;
+      }
+
+      .switch::before,
+      .switch::after,
+      .body,
+      .joycon,
+      .rail {
+        display: none;
+      }
+
+      .screen {
+        position: relative;
+        left: auto;
+        top: auto;
+        width: 100%;
+        height: 100%;
+        border-radius: 18px;
+      }
+
+      .hud {
+        position: absolute;
+        left: 10px;
+        right: 10px;
+        top: 10px;
+        width: auto;
+        height: 52px;
+      }
+
+      .screen-inner {
+        grid-template-rows: minmax(0, 1fr) auto;
+        padding: 74px 10px 10px;
+        gap: 8px;
+      }
+
+      .topbar {
+        display: none;
+      }
+
+      .workspace {
+        overflow: hidden;
+      }
+
+      .cemu-view.active {
+        grid-template-columns: 1fr;
+      }
+
+      .cemu-view .side-panel {
+        display: none;
+      }
+
+      .cemu-view .main-panel {
+        padding: 14px;
+      }
+
+      .cemu-view .launch-art {
+        height: 74px;
+        font-size: 42px;
+      }
+
+      .cemu-view .launch-title {
+        font-size: 24px;
+      }
+
+      .cemu-view .cemu-manifest {
+        grid-template-columns: 1fr;
+      }
+
+      .footer {
+        min-height: 64px;
+      }
+
+      .status-line {
+        width: 100%;
       }
     }
   </style>
@@ -1768,9 +1935,52 @@
               </article>
             </section>
 
+            <section id="cemuView" class="view cemu-view" aria-label="Switch Cemu">
+              <aside class="side-panel">
+                <h2 class="panel-title">Switch Cemu</h2>
+                <div class="panel-kicker">Public-safe launcher install</div>
+                <div class="side-meta">
+                  <div class="metric"><span>Public</span><strong>Tile only</strong></div>
+                  <div class="metric"><span>Scanned</span><strong>42 files</strong></div>
+                  <div class="metric"><span>Local app</span><strong>82.5 MB</strong></div>
+                  <div class="metric"><span>Content</span><strong>redacted</strong></div>
+                </div>
+              </aside>
+              <article class="main-panel">
+                <div class="launch-art" style="--tile-accent: #ff4158;">SC</div>
+                <h2 class="launch-title">Switch Cemu</h2>
+                <div class="launch-path">local:/HB applications/Switch_Cemu/cemu.nro</div>
+                <div class="cemu-manifest">
+                  <div class="manifest-row">
+                    <span>Simulator install</span>
+                    <strong>active</strong>
+                  </div>
+                  <div class="manifest-row">
+                    <span>Published assets</span>
+                    <strong>tile, route, manifest</strong>
+                  </div>
+                  <div class="manifest-row">
+                    <span>Private package</span>
+                    <strong>not uploaded</strong>
+                  </div>
+                  <div class="manifest-row">
+                    <span>Release target</span>
+                    <strong>GitHub Pages</strong>
+                  </div>
+                </div>
+                <div class="button-row cemu-actions">
+                  <button id="cemuLaunchButton" class="control-btn" type="button">Launch Sim</button>
+                  <button id="cemuDnsButton" class="control-btn" type="button">DNS</button>
+                  <button id="cemuFilesButton" class="control-btn" type="button">Files</button>
+                </div>
+                <div id="cemuLog" class="codebox">Installed: tile, manifest, launch sim.
+Private: binary, keys, tickets, certs, game content.</div>
+              </article>
+            </section>
+
             <section id="gameView" class="view game-view" aria-label="Game simulation">
               <article class="sim-game">
-                <div class="game-title">Game Running</div>
+                <div id="gameTitle" class="game-title">Game Running</div>
                 <div class="game-field">
                   <div class="game-player"></div>
                 </div>
@@ -1829,11 +2039,21 @@
       { label: "Files", path: "sdmc:/switch/files/files.nro", type: "PROJECT VIEW", accent: "#ff8a5c", route: "files", initial: "F" },
       { label: "Music", path: "sdmc:/switch/TriPlayer/TriPlayer.nro", type: "TRIPLAYER", accent: "#ff374b", route: "hud", initial: "M" },
       { label: "DNS", path: "https://dns.switchbru.com/", type: "SWITCHBRU", accent: "#ff6b6b", route: "dns", initial: "D" },
+      { label: "Switch Cemu", path: "local:/HB applications/Switch_Cemu/cemu.nro", type: "LOCAL TILE", accent: "#ff4158", route: "cemu", initial: "SC" },
       { label: "Studio", path: "sdmc:/switch/oled_home_studio/oled_home_studio.nro", type: "THEME TOOL", accent: "#14b8ff", route: "studio", initial: "S" },
       { label: "Build", path: "mp3_hud/Build-Sysmode.ps1", type: "SIM BUILD", accent: "#a3e635", route: "build", initial: "B" }
     ];
 
     const projectFiles = [
+      {
+        name: "Switch_Cemu install manifest",
+        path: "local:/HB applications/Switch_Cemu/",
+        type: "Local",
+        size: "9.39 GB scanned",
+        icon: "SC",
+        summary: "Public simulator entry for the attached Switch_Cemu folder. The site stores metadata only.",
+        snippet: 'Included in .io release:\n- Switch Cemu tile\n- launcher route\n- sanitized manifest\n\nNot included:\n- emulator binary\n- keys\n- tickets or certs\n- WUA/RPX/game content'
+      },
       {
         name: "toolbox.json",
         path: "mp3_hud/toolbox.json",
@@ -1925,6 +2145,7 @@
       hud: document.getElementById("hudView"),
       build: document.getElementById("buildView"),
       dns: document.getElementById("dnsView"),
+      cemu: document.getElementById("cemuView"),
       game: document.getElementById("gameView"),
       gallery: document.getElementById("galleryView")
     };
@@ -1965,6 +2186,8 @@
     const dnsAddress = document.getElementById("dnsAddress");
     const dnsFrame = document.getElementById("dnsFrame");
     const dnsStatus = document.getElementById("dnsStatus");
+    const cemuLog = document.getElementById("cemuLog");
+    const gameTitle = document.getElementById("gameTitle");
 
     const dnsProfile = {
       portalUrl: "https://dns.switchbru.com/",
@@ -1987,6 +2210,7 @@
         case "hud": return ["MP3 HUD", "AUDIO COMMAND SIMULATOR"];
         case "build": return ["BUILD", "SYSMODE SHIM OUTPUT"];
         case "dns": return ["DNS INTERNET", "SWITCHBRU DNS PORTAL"];
+        case "cemu": return ["SWITCH CEMU", "LOCAL PACKAGE TILE"];
         case "game": return ["RUNNING TITLE", "HUD REMAINS VISIBLE IN SIM"];
         case "gallery": return ["MOCKUPS", "RED GLASS UI SET"];
         case "launch": return ["TILE TARGET", "LAUNCH PREVIEW"];
@@ -2058,6 +2282,9 @@
       }
       if (tile.route === "dns") {
         renderDns();
+      }
+      if (tile.route === "cemu") {
+        renderCemu();
       }
       showView(tile.route);
       statusLine.textContent = `${tile.label} opened.`;
@@ -2313,6 +2540,13 @@
       }
     }
 
+    function renderCemu() {
+      cemuLog.textContent = [
+        "Installed: tile, manifest, launch sim.",
+        "Private: binary, keys, tickets, certs, game content."
+      ].join("\n");
+    }
+
     function selectRelative(offset) {
       if (state.screen !== "home") {
         showView("home");
@@ -2414,7 +2648,7 @@
       }
 
       if (imported.length > 0) {
-        tiles = imported.concat(tiles.filter((tile) => ["DNS", "Studio", "Build"].includes(tile.label)));
+        tiles = imported.concat(tiles.filter((tile) => ["DNS", "Switch Cemu", "Studio", "Build"].includes(tile.label)));
         state.selectedTile = 0;
         renderHome();
         renderMiniTiles();
@@ -2514,6 +2748,27 @@
         });
       });
 
+      document.getElementById("cemuLaunchButton").addEventListener("click", () => {
+        gameTitle.textContent = "Switch Cemu Preview";
+        cemuLog.textContent = [
+          "Launch sim started with the HUD visible.",
+          "No binary or game package is loaded by the public webapp."
+        ].join("\n");
+        showView("game");
+        statusLine.textContent = "Switch Cemu launch simulated.";
+      });
+      document.getElementById("cemuDnsButton").addEventListener("click", () => {
+        renderDns();
+        showView("dns");
+        statusLine.textContent = "SwitchBru DNS opened.";
+      });
+      document.getElementById("cemuFilesButton").addEventListener("click", () => {
+        state.selectedFile = 0;
+        renderFiles();
+        showView("files");
+        statusLine.textContent = "Project files opened.";
+      });
+
       document.querySelectorAll("[data-audio]").forEach((button) => {
         button.addEventListener("click", () => {
           const action = button.dataset.audio;
@@ -2590,14 +2845,21 @@
     wireInputs();
 
     const initialView = new URLSearchParams(window.location.search).get("view");
-    if (initialView === "dns") {
-      const dnsIndex = tiles.findIndex((tile) => tile.route === "dns");
-      if (dnsIndex >= 0) {
-        state.selectedTile = dnsIndex;
+    if (initialView === "dns" || initialView === "cemu") {
+      const routeIndex = tiles.findIndex((tile) => tile.route === initialView);
+      if (routeIndex >= 0) {
+        state.selectedTile = routeIndex;
       }
-      renderDns();
-      showView("dns");
-      statusLine.textContent = "DNS Internet opened.";
+      if (initialView === "dns") {
+        renderDns();
+        showView("dns");
+        statusLine.textContent = "DNS Internet opened.";
+      }
+      if (initialView === "cemu") {
+        renderCemu();
+        showView("cemu");
+        statusLine.textContent = "Switch Cemu opened.";
+      }
     }
   </script>
 </body>

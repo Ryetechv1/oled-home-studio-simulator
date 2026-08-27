@@ -14,3 +14,5 @@ artifacts and local MP3 files are intentionally not included.
 - Import your own wallpaper, music file, or config from the Studio tile.
 - Open the DNS tile for the simulated SwitchBru DNS browser profile at
   `https://dns.switchbru.com/`.
+- Open the Switch Cemu tile for a public-safe local package install simulation;
+  binaries, keys, WUA/game content, tickets, and certificates are not published.
