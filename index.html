@@ -1084,9 +1084,8 @@
       color: #9bdcff;
       font-size: 12px;
       font-weight: 900;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
     }
 
     .cemu-manifest {
@@ -1924,7 +1923,7 @@
                 <div class="dns-links" aria-label="DNS browser presets">
                   <button class="pill-btn active" type="button" data-dns-url="https://dns.switchbru.com/">SwitchBru</button>
                   <button class="pill-btn" type="button" data-dns-preset="home">Local</button>
-                  <button class="pill-btn" type="button" data-dns-preset="search">Search</button>
+                  <button class="pill-btn" type="button" data-dns-search="https://www.google.com/search?q=%s">Search</button>
                   <button class="pill-btn" type="button" data-dns-url="https://github.com/Ryetechv1/oled-home-studio-simulator">Repo</button>
                   <button class="pill-btn" type="button" data-dns-url="https://ryetechv1.github.io/oled-home-studio-simulator/">Live</button>
                 </div>
@@ -2192,6 +2191,7 @@ Private: binary, keys, tickets, certs, game content.</div>
     const dnsProfile = {
       portalUrl: "https://dns.switchbru.com/",
       portalHost: "dns.switchbru.com",
+      searchUrlTemplate: "https://www.google.com/search?q=%s",
       label: "SwitchBru DNS"
     };
 
@@ -2398,12 +2398,12 @@ Private: binary, keys, tickets, certs, game content.</div>
           ]
         },
         search: {
-          title: "Portal Search",
-          subtitle: "Local resolver",
+          title: "Google Search",
+          subtitle: dnsProfile.searchUrlTemplate,
           body: [
-            "Query route: DuckDuckGo frame target.",
-            "Search terms route to DuckDuckGo in the browser frame.",
-            "External pages may request a new tab when frame loading is blocked."
+            "Plain search terms route through the Google search template.",
+            "Type a search term in the address bar, then press Go.",
+            "Google may request New Tab when frame loading is blocked."
           ]
         },
         blocked: {
@@ -2488,13 +2488,36 @@ Private: binary, keys, tickets, certs, game content.</div>
       dnsFrame.removeAttribute("src");
       dnsFrame.srcdoc = portalHtml(kind);
       dnsAddress.value = `portal://${kind}`;
+      markDnsActive("preset", kind);
       dnsStatus.textContent = `Loaded portal://${kind} with ${dnsProfile.label}.`;
+    }
+
+    function markDnsActive(kind, value) {
+      document.querySelectorAll("[data-dns-preset], [data-dns-url], [data-dns-search]").forEach((button) => {
+        const matches =
+          (kind === "preset" && button.dataset.dnsPreset === value) ||
+          (kind === "url" && button.dataset.dnsUrl === value) ||
+          (kind === "search" && button.dataset.dnsSearch === value);
+        button.classList.toggle("active", matches);
+      });
+    }
+
+    function setDnsSearchTemplate(template) {
+      dnsProfile.searchUrlTemplate = template;
+      dnsFrame.removeAttribute("src");
+      dnsFrame.srcdoc = portalHtml("search");
+      dnsAddress.value = template;
+      markDnsActive("search", template);
+      dnsStatus.textContent = `Search template set to ${template}. Type terms and press Go.`;
     }
 
     function resolveDnsInput(rawValue) {
       const raw = rawValue.trim();
       if (!raw) {
         return { kind: "portal", value: "home" };
+      }
+      if (/^https?:\/\//i.test(raw) && raw.includes("%s")) {
+        return { kind: "search-template", value: raw };
       }
       if (raw.startsWith("portal://")) {
         return { kind: "portal", value: raw.replace("portal://", "") || "home" };
@@ -2507,7 +2530,7 @@ Private: binary, keys, tickets, certs, game content.</div>
       }
       return {
         kind: "url",
-        value: `https://duckduckgo.com/?q=${encodeURIComponent(raw)}`
+        value: dnsProfile.searchUrlTemplate.replace("%s", encodeURIComponent(raw))
       };
     }
 
@@ -2517,16 +2540,33 @@ Private: binary, keys, tickets, certs, game content.</div>
         setDnsPreset(resolved.value);
         return;
       }
+      if (resolved.kind === "search-template") {
+        setDnsSearchTemplate(resolved.value);
+        return;
+      }
       dnsFrame.removeAttribute("srcdoc");
       dnsFrame.src = resolved.value;
       dnsAddress.value = resolved.value;
-      dnsStatus.textContent = `Routing ${resolved.value} with ${dnsProfile.label}.`;
+      const urlButton = Array.from(document.querySelectorAll("[data-dns-url]")).find((button) => button.dataset.dnsUrl === resolved.value);
+      if (urlButton) {
+        markDnsActive("url", resolved.value);
+      } else if (resolved.value.includes("google.com/search")) {
+        markDnsActive("search", dnsProfile.searchUrlTemplate);
+      } else {
+        markDnsActive("", "");
+      }
+      const frameNote = resolved.value.includes("google.com/search") ? " Use New Tab if Google blocks the frame." : "";
+      dnsStatus.textContent = `Routing ${resolved.value} with ${dnsProfile.label}.${frameNote}`;
     }
 
     function openDnsPopout() {
       const resolved = resolveDnsInput(dnsAddress.value);
       if (resolved.kind === "portal") {
         setDnsPreset(resolved.value);
+        return;
+      }
+      if (resolved.kind === "search-template") {
+        setDnsSearchTemplate(resolved.value);
         return;
       }
       window.open(resolved.value, "_blank", "noopener,noreferrer");
@@ -2734,14 +2774,21 @@ Private: binary, keys, tickets, certs, game content.</div>
       });
       document.querySelectorAll("[data-dns-preset]").forEach((button) => {
         button.addEventListener("click", () => {
-          document.querySelectorAll("[data-dns-preset], [data-dns-url]").forEach((item) => item.classList.remove("active"));
+          document.querySelectorAll("[data-dns-preset], [data-dns-url], [data-dns-search]").forEach((item) => item.classList.remove("active"));
           button.classList.add("active");
           setDnsPreset(button.dataset.dnsPreset);
         });
       });
+      document.querySelectorAll("[data-dns-search]").forEach((button) => {
+        button.addEventListener("click", () => {
+          document.querySelectorAll("[data-dns-preset], [data-dns-url], [data-dns-search]").forEach((item) => item.classList.remove("active"));
+          button.classList.add("active");
+          setDnsSearchTemplate(button.dataset.dnsSearch);
+        });
+      });
       document.querySelectorAll("[data-dns-url]").forEach((button) => {
         button.addEventListener("click", () => {
-          document.querySelectorAll("[data-dns-preset], [data-dns-url]").forEach((item) => item.classList.remove("active"));
+          document.querySelectorAll("[data-dns-preset], [data-dns-url], [data-dns-search]").forEach((item) => item.classList.remove("active"));
           button.classList.add("active");
           dnsAddress.value = button.dataset.dnsUrl;
           browseDnsAddress();
@@ -2844,14 +2891,21 @@ Private: binary, keys, tickets, certs, game content.</div>
     updateAudioHud();
     wireInputs();
 
-    const initialView = new URLSearchParams(window.location.search).get("view");
+    const initialParams = new URLSearchParams(window.location.search);
+    const initialView = initialParams.get("view");
+    const initialSearch = initialParams.get("search") || initialParams.get("q");
     if (initialView === "dns" || initialView === "cemu") {
       const routeIndex = tiles.findIndex((tile) => tile.route === initialView);
       if (routeIndex >= 0) {
         state.selectedTile = routeIndex;
       }
       if (initialView === "dns") {
-        renderDns();
+        if (initialSearch) {
+          dnsAddress.value = initialSearch;
+          browseDnsAddress();
+        } else {
+          renderDns();
+        }
         showView("dns");
         statusLine.textContent = "DNS Internet opened.";
       }
