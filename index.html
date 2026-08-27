@@ -49,6 +49,7 @@
 
     button {
       color: inherit;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .stage {
@@ -212,6 +213,32 @@
       right: 0;
     }
 
+    .joy-control {
+      border: 0;
+      padding: 0;
+      margin: 0;
+      appearance: none;
+      cursor: pointer;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .joy-control:focus-visible {
+      outline: 3px solid rgba(20, 184, 255, 0.86);
+      outline-offset: 4px;
+    }
+
+    .joy-control.is-pressed,
+    .stick.is-pressed,
+    .button.is-pressed {
+      box-shadow:
+        0 0 0 3px rgba(20, 184, 255, 0.58),
+        inset 0 2px 5px rgba(255, 255, 255, 0.16),
+        inset 0 -5px 10px rgba(0, 0, 0, 0.54);
+      filter: brightness(1.16);
+    }
+
     .rail {
       position: absolute;
       top: 4.94%;
@@ -248,6 +275,10 @@
       aspect-ratio: 1;
       border-radius: 50%;
       border: 8px solid #151922;
+      transform: translate(
+        calc(var(--stick-x, 0) * 1px),
+        calc(var(--stick-y, 0) * 1px));
+      transition: transform 90ms ease, filter 90ms ease, box-shadow 90ms ease;
     }
 
     .stick.left {
@@ -301,6 +332,46 @@
       height: 31%;
     }
 
+    .dpad-hit {
+      position: absolute;
+      z-index: 2;
+      background: transparent;
+      border-radius: 10px;
+    }
+
+    .dpad-hit.up {
+      left: 29%;
+      top: -8%;
+      width: 42%;
+      height: 44%;
+    }
+
+    .dpad-hit.down {
+      left: 29%;
+      bottom: -8%;
+      width: 42%;
+      height: 44%;
+    }
+
+    .dpad-hit.left {
+      left: -8%;
+      top: 29%;
+      width: 44%;
+      height: 42%;
+    }
+
+    .dpad-hit.right {
+      right: -8%;
+      top: 29%;
+      width: 44%;
+      height: 42%;
+    }
+
+    .dpad-hit.is-pressed {
+      background: rgba(20, 184, 255, 0.24);
+      box-shadow: 0 0 0 2px rgba(20, 184, 255, 0.54);
+    }
+
     .face {
       position: absolute;
       right: 19%;
@@ -341,6 +412,10 @@
     .home-dot {
       right: 41.5%;
       top: 68.6%;
+    }
+
+    .mobile-control-deck {
+      display: none;
     }
 
     .screen {
@@ -1959,7 +2034,7 @@
     @media (max-width: 520px) {
       body {
         min-height: 100vh;
-        padding: 10px 8px 58px;
+        padding: 10px 8px 142px;
       }
 
       .stage {
@@ -2097,6 +2172,80 @@
       .status-line {
         width: 100%;
       }
+
+      .mobile-control-deck {
+        position: fixed;
+        left: max(10px, env(safe-area-inset-left));
+        right: max(10px, env(safe-area-inset-right));
+        bottom: max(10px, env(safe-area-inset-bottom));
+        z-index: 30;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        border: 1px solid rgba(255, 153, 164, 0.38);
+        border-radius: 18px;
+        background:
+          linear-gradient(180deg, rgba(255, 126, 137, 0.13) 0 18px, transparent 18px),
+          rgba(5, 8, 14, 0.88);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.1),
+          0 18px 36px rgba(0, 0, 0, 0.46);
+        backdrop-filter: blur(14px);
+      }
+
+      .mobile-cluster {
+        display: grid;
+        grid-template-columns: repeat(3, 42px);
+        grid-template-rows: repeat(3, 42px);
+        gap: 4px;
+      }
+
+      .mobile-cluster.right {
+        justify-self: end;
+      }
+
+      .mobile-control {
+        min-width: 42px;
+        height: 42px;
+        display: grid;
+        place-items: center;
+        border: 1px solid rgba(255, 185, 193, 0.44);
+        border-radius: 10px;
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 42%),
+          rgba(17, 22, 33, 0.9);
+        color: #fff4f6;
+        font-size: 13px;
+        font-weight: 900;
+      }
+
+      .mobile-control.round {
+        border-radius: 50%;
+      }
+
+      .mobile-control.nav-up,
+      .mobile-control.face-x { grid-column: 2; grid-row: 1; }
+      .mobile-control.nav-left,
+      .mobile-control.face-y { grid-column: 1; grid-row: 2; }
+      .mobile-control.mobile-stick,
+      .mobile-control.face-a { grid-column: 2; grid-row: 2; }
+      .mobile-control.nav-right { grid-column: 3; grid-row: 2; }
+      .mobile-control.nav-down,
+      .mobile-control.face-b { grid-column: 2; grid-row: 3; }
+      .mobile-control.face-a { grid-column: 3; }
+
+      .mobile-stick {
+        border-color: rgba(20, 184, 255, 0.48);
+        background:
+          radial-gradient(circle at 36% 30%, rgba(255, 255, 255, 0.22), transparent 28%),
+          linear-gradient(135deg, #252a32, #0f141c);
+        transform: translate(
+          calc(var(--stick-x, 0) * 1px),
+          calc(var(--stick-y, 0) * 1px));
+        transition: transform 90ms ease, filter 90ms ease, box-shadow 90ms ease;
+      }
     }
   </style>
 </head>
@@ -2111,14 +2260,18 @@
       <span class="frame-dot" aria-hidden="true"></span>
     </div>
     <section class="switch">
-      <div class="joycon left" aria-hidden="true">
-        <div class="small-button minus"></div>
-        <div class="stick left"></div>
-        <div class="dpad">
-          <div class="dpad-piece vertical"></div>
-          <div class="dpad-piece horizontal"></div>
+      <div class="joycon left" aria-label="Left Joy-Con touch controls">
+        <div class="small-button minus" aria-hidden="true"></div>
+        <button class="stick left joy-control" type="button" data-stick="left" aria-label="Left stick navigate selection"></button>
+        <div class="dpad" aria-label="Directional pad controls">
+          <div class="dpad-piece vertical" aria-hidden="true"></div>
+          <div class="dpad-piece horizontal" aria-hidden="true"></div>
+          <button class="dpad-hit up joy-control" type="button" data-control="nav-up" aria-label="D-pad up"></button>
+          <button class="dpad-hit down joy-control" type="button" data-control="nav-down" aria-label="D-pad down"></button>
+          <button class="dpad-hit left joy-control" type="button" data-control="nav-left" aria-label="D-pad left"></button>
+          <button class="dpad-hit right joy-control" type="button" data-control="nav-right" aria-label="D-pad right"></button>
         </div>
-        <div class="capture-dot"></div>
+        <div class="capture-dot" aria-hidden="true"></div>
       </div>
       <div class="rail left" aria-hidden="true"></div>
       <div class="body" aria-hidden="true"></div>
@@ -2456,24 +2609,42 @@ Private: browser metadata only.</div>
             <div class="footer-left">
               <span class="key">A</span><span>Open</span>
               <span class="key">B</span><span>Home</span>
+              <span class="key">X</span><span>Music</span>
+              <span class="key">Y</span><span>Cemu</span>
               <span class="key">L/R</span><span>Move</span>
-              <span class="key">Space</span><span>Music</span>
+              <span class="key">RS</span><span>Scroll</span>
             </div>
             <div id="statusLine" class="status-line">Album selected.</div>
           </footer>
         </div>
       </div>
       <div class="rail right" aria-hidden="true"></div>
-      <div class="joycon right" aria-hidden="true">
-        <div class="small-button plus"></div>
+      <div class="joycon right" aria-label="Right Joy-Con touch controls">
+        <div class="small-button plus" aria-hidden="true"></div>
         <div class="face">
-          <div class="button x">X</div>
-          <div class="button y">Y</div>
-          <div class="button a">A</div>
-          <div class="button b">B</div>
+          <button class="button x joy-control" type="button" data-control="music" aria-label="X Space Music">X</button>
+          <button class="button y joy-control" type="button" data-control="cemu" aria-label="Y Cemu">Y</button>
+          <button class="button a joy-control" type="button" data-control="open" aria-label="A Open">A</button>
+          <button class="button b joy-control" type="button" data-control="home" aria-label="B Home">B</button>
         </div>
-        <div class="stick right"></div>
-        <div class="home-dot"></div>
+        <button class="stick right joy-control" type="button" data-stick="right" aria-label="Right stick scroll"></button>
+        <button class="home-dot joy-control" type="button" data-control="home" aria-label="Home"></button>
+      </div>
+      <div class="mobile-control-deck" aria-label="Mobile Switch controls">
+        <div class="mobile-cluster left">
+          <button class="mobile-control nav-up joy-control" type="button" data-control="nav-up" aria-label="Navigate up">U</button>
+          <button class="mobile-control nav-left joy-control" type="button" data-control="nav-left" aria-label="Navigate left">L</button>
+          <button class="mobile-control nav-right joy-control" type="button" data-control="nav-right" aria-label="Navigate right">R</button>
+          <button class="mobile-control nav-down joy-control" type="button" data-control="nav-down" aria-label="Navigate down">D</button>
+          <button class="mobile-control mobile-stick joy-control round" type="button" data-stick="left" aria-label="Left stick navigate selection">LS</button>
+        </div>
+        <button class="mobile-control mobile-stick joy-control round" type="button" data-stick="right" aria-label="Right stick scroll">RS</button>
+        <div class="mobile-cluster right">
+          <button class="mobile-control face-x joy-control round" type="button" data-control="music" aria-label="X Space Music">X</button>
+          <button class="mobile-control face-y joy-control round" type="button" data-control="cemu" aria-label="Y Cemu">Y</button>
+          <button class="mobile-control face-a joy-control round" type="button" data-control="open" aria-label="A Open">A</button>
+          <button class="mobile-control face-b joy-control round" type="button" data-control="home" aria-label="B Home">B</button>
+        </div>
       </div>
     </section>
   </main>
@@ -3332,10 +3503,30 @@ Private: browser metadata only.</div>
       `;
     }
 
-    function selectRelative(offset) {
+    function launchCemuSim(source = "Launch Sim") {
+      const handoff = cemuHandoffSpec();
+      renderCemuLaunchSim();
+      cemuLog.textContent = [
+        state.cemuFiles.length > 0 ? "Launch sim rendered staged files." : "Launch sim opened with no files staged.",
+        `Next load: ${handoff.call}`,
+        "No binary or game package is loaded by the public webapp."
+      ].join("\n");
+      showView("game");
+      document.getElementById("screenTitle").textContent = "SWITCH CEMU";
+      document.getElementById("screenSubtitle").textContent =
+        state.cemuFiles.length > 0 ? "STAGED FILE MANIFEST" : "NO FILES STAGED";
+      statusLine.textContent = `${source}: Switch Cemu launch simulated.`;
+    }
+
+    function selectedColumnCount() {
+      const template = getComputedStyle(tileGrid).gridTemplateColumns;
+      const columns = template.split(" ").filter(Boolean).length;
+      return Math.max(1, columns || (state.layout === "folder" ? 4 : state.layout === "compact" ? 8 : 7));
+    }
+
+    function moveHomeSelection(offset, source = "L/R") {
       if (state.screen !== "home") {
         showView("home");
-        return;
       }
       state.selectedTile = (state.selectedTile + offset + tiles.length) % tiles.length;
       renderHome();
@@ -3343,6 +3534,240 @@ Private: browser metadata only.</div>
       if (selectedButton) {
         selectedButton.scrollIntoView({ block: "nearest", inline: "nearest" });
       }
+      statusLine.textContent = `${source} Move: ${tiles[state.selectedTile].label}.`;
+    }
+
+    function selectRelative(offset) {
+      moveHomeSelection(offset, "L/R");
+    }
+
+    function navigateSelection(direction, source = "L Stick") {
+      const columns = selectedColumnCount();
+      const offsets = {
+        left: -1,
+        right: 1,
+        up: -columns,
+        down: columns
+      };
+      moveHomeSelection(offsets[direction] || 0, source);
+    }
+
+    function activeScrollTarget() {
+      const activeView = views[state.screen] || views.home;
+      const preferred = [
+        ".main-panel",
+        ".file-list",
+        ".preview-panel",
+        ".studio-tools",
+        ".dns-frame-shell",
+        ".tile-grid",
+        ".runtime-file-list",
+        ".game-field",
+        ".gallery-strip"
+      ];
+      for (const selector of preferred) {
+        const target = activeView.querySelector(selector);
+        if (target && (target.scrollHeight > target.clientHeight || target.scrollWidth > target.clientWidth)) {
+          return target;
+        }
+      }
+      return activeView;
+    }
+
+    function scrollActiveSurface(direction, source = "R Stick") {
+      const target = activeScrollTarget();
+      const amount = 128;
+      const delta = {
+        left: { left: -amount, top: 0 },
+        right: { left: amount, top: 0 },
+        up: { left: 0, top: -amount },
+        down: { left: 0, top: amount }
+      }[direction] || { left: 0, top: amount };
+      target.scrollBy({
+        left: delta.left,
+        top: delta.top,
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"
+      });
+      statusLine.textContent = `${source} Scroll ${direction}.`;
+    }
+
+    function goHome(source = "B") {
+      showView("home");
+      statusLine.textContent = `${source} Home.`;
+    }
+
+    function openWithA(source = "A") {
+      const tile = tiles[state.selectedTile];
+      openSelectedTile();
+      statusLine.textContent = `${source} Open: ${tile.label}.`;
+    }
+
+    function toggleMusicFromControl(source = "X") {
+      Promise.resolve(playPauseAudio()).finally(() => {
+        statusLine.textContent = `${source} Space Music.`;
+      });
+    }
+
+    function activateCemu(source = "Y") {
+      if (state.screen === "cemu") {
+        launchCemuSim(source);
+        return;
+      }
+      const cemuIndex = tiles.findIndex((tile) => tile.route === "cemu");
+      if (cemuIndex >= 0) {
+        state.selectedTile = cemuIndex;
+      }
+      renderCemu();
+      showView("cemu");
+      statusLine.textContent = `${source} Cemu opened.`;
+    }
+
+    function activateControl(action, source) {
+      switch (action) {
+        case "open":
+          openWithA(source || "A");
+          break;
+        case "home":
+          goHome(source || "B");
+          break;
+        case "music":
+          toggleMusicFromControl(source || "X");
+          break;
+        case "cemu":
+          activateCemu(source || "Y");
+          break;
+        case "nav-up":
+          navigateSelection("up", source || "D-Pad");
+          break;
+        case "nav-down":
+          navigateSelection("down", source || "D-Pad");
+          break;
+        case "nav-left":
+          navigateSelection("left", source || "L/R");
+          break;
+        case "nav-right":
+          navigateSelection("right", source || "L/R");
+          break;
+        default:
+          break;
+      }
+    }
+
+    function controlSource(element) {
+      if (element.dataset.control === "open") return "A";
+      if (element.dataset.control === "home") return "B";
+      if (element.dataset.control === "music") return "X";
+      if (element.dataset.control === "cemu") return "Y";
+      if (element.dataset.control === "nav-left" || element.dataset.control === "nav-right") return "L/R";
+      if (element.dataset.stick === "left") return "L Stick";
+      if (element.dataset.stick === "right") return "R Stick";
+      return "D-Pad";
+    }
+
+    function setPressed(element, pressed) {
+      element.classList.toggle("is-pressed", pressed);
+    }
+
+    function bindControlButtons() {
+      document.querySelectorAll("[data-control]").forEach((button) => {
+        button.addEventListener("pointerdown", () => setPressed(button, true));
+        ["pointerup", "pointercancel", "pointerleave", "blur"].forEach((eventName) => {
+          button.addEventListener(eventName, () => setPressed(button, false));
+        });
+        button.addEventListener("click", (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          setPressed(button, false);
+          activateControl(button.dataset.control, controlSource(button));
+        });
+      });
+    }
+
+    function stickDirection(dx, dy) {
+      return Math.abs(dx) > Math.abs(dy)
+        ? (dx > 0 ? "right" : "left")
+        : (dy > 0 ? "down" : "up");
+    }
+
+    function bindStickControl(stick) {
+      let gesture = null;
+      const threshold = 18;
+      const repeatMs = 170;
+      const finishGesture = (event) => {
+        if (!gesture || (event.pointerId !== undefined && event.pointerId !== gesture.id)) {
+          return;
+        }
+        if (!gesture.moved) {
+          if (stick.dataset.stick === "left") {
+            navigateSelection("right", "L Stick");
+          } else {
+            scrollActiveSurface("down", "R Stick");
+          }
+        }
+        stick.style.setProperty("--stick-x", "0");
+        stick.style.setProperty("--stick-y", "0");
+        setPressed(stick, false);
+        gesture = null;
+      };
+
+      stick.addEventListener("pointerdown", (event) => {
+        if (event.button !== undefined && event.button !== 0) {
+          return;
+        }
+        event.preventDefault();
+        event.stopPropagation();
+        stick.focus({ preventScroll: true });
+        gesture = {
+          id: event.pointerId,
+          startX: event.clientX,
+          startY: event.clientY,
+          moved: false,
+          lastDirection: "",
+          lastStepAt: 0
+        };
+        if (stick.setPointerCapture) {
+          try {
+            stick.setPointerCapture(event.pointerId);
+          } catch (error) {
+            // Synthetic pointer events and a few embedded browsers do not allow capture.
+          }
+        }
+        setPressed(stick, true);
+      });
+
+      stick.addEventListener("pointermove", (event) => {
+        if (!gesture || event.pointerId !== gesture.id) {
+          return;
+        }
+        event.preventDefault();
+        const dx = event.clientX - gesture.startX;
+        const dy = event.clientY - gesture.startY;
+        const displayX = Math.max(-10, Math.min(10, dx * 0.24));
+        const displayY = Math.max(-10, Math.min(10, dy * 0.24));
+        stick.style.setProperty("--stick-x", displayX.toFixed(2));
+        stick.style.setProperty("--stick-y", displayY.toFixed(2));
+
+        if (Math.hypot(dx, dy) < threshold) {
+          return;
+        }
+        const direction = stickDirection(dx, dy);
+        const now = performance.now();
+        if (direction === gesture.lastDirection && now - gesture.lastStepAt < repeatMs) {
+          return;
+        }
+        gesture.moved = true;
+        gesture.lastDirection = direction;
+        gesture.lastStepAt = now;
+        if (stick.dataset.stick === "left") {
+          navigateSelection(direction, "L Stick");
+        } else {
+          scrollActiveSurface(direction, "R Stick");
+        }
+      });
+
+      ["pointerup", "pointercancel", "lostpointercapture"].forEach((eventName) => {
+        stick.addEventListener(eventName, finishGesture);
+      });
     }
 
     function updateAudioHud() {
@@ -3597,17 +4022,7 @@ Private: browser metadata only.</div>
 
       document.getElementById("cemuLaunchButton").addEventListener("click", (event) => {
         event.stopPropagation();
-        const handoff = cemuHandoffSpec();
-        renderCemuLaunchSim();
-        cemuLog.textContent = [
-          state.cemuFiles.length > 0 ? "Launch sim rendered staged files." : "Launch sim opened with no files staged.",
-          `Next load: ${handoff.call}`,
-          "No binary or game package is loaded by the public webapp."
-        ].join("\n");
-        showView("game");
-        document.getElementById("screenTitle").textContent = "SWITCH CEMU";
-        document.getElementById("screenSubtitle").textContent = state.cemuFiles.length > 0 ? "STAGED FILE MANIFEST" : "NO FILES STAGED";
-        statusLine.textContent = "Switch Cemu launch simulated.";
+        launchCemuSim("Launch Sim");
       });
       document.getElementById("cemuDnsButton").addEventListener("click", () => {
         renderDns();
@@ -3661,28 +4076,52 @@ Private: browser metadata only.</div>
         ].join("\n");
         statusLine.textContent = "Guard check displayed.";
       });
+
+      bindControlButtons();
+      document.querySelectorAll("[data-stick]").forEach(bindStickControl);
     }
 
     document.addEventListener("keydown", (event) => {
-      if (event.target instanceof HTMLInputElement) {
+      if (
+        event.target instanceof HTMLInputElement ||
+        event.target instanceof HTMLTextAreaElement ||
+        event.target instanceof HTMLSelectElement ||
+        event.target.isContentEditable
+      ) {
         return;
       }
-      if (event.key === "ArrowRight" || event.key.toLowerCase() === "r") {
-        selectRelative(1);
-      }
-      if (event.key === "ArrowLeft" || event.key.toLowerCase() === "l") {
-        selectRelative(-1);
-      }
-      if (event.key === "Enter" || event.key.toLowerCase() === "a") {
-        openSelectedTile();
-      }
-      if (event.key === "Escape" || event.key.toLowerCase() === "b") {
-        showView("home");
-        statusLine.textContent = "Home.";
-      }
-      if (event.key === " ") {
+      const key = event.key.toLowerCase();
+      if (event.key === "ArrowRight" || key === "r") {
         event.preventDefault();
-        playPauseAudio();
+        navigateSelection("right", "L/R");
+      }
+      if (event.key === "ArrowLeft" || key === "l") {
+        event.preventDefault();
+        navigateSelection("left", "L/R");
+      }
+      if (event.key === "ArrowUp") {
+        event.preventDefault();
+        navigateSelection("up", "D-Pad");
+      }
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        navigateSelection("down", "D-Pad");
+      }
+      if (event.key === "Enter" || key === "a") {
+        event.preventDefault();
+        openWithA("A");
+      }
+      if (event.key === "Escape" || key === "b") {
+        event.preventDefault();
+        goHome("B");
+      }
+      if (event.key === " " || key === "x") {
+        event.preventDefault();
+        toggleMusicFromControl(key === "x" ? "X" : "Space");
+      }
+      if (key === "y") {
+        event.preventDefault();
+        activateCemu("Y");
       }
     });
 

@@ -11,6 +11,9 @@ artifacts and local MP3 files are intentionally not included.
 - Use `A` / `Enter` to open a tile.
 - Use `B` / `Esc` to return home.
 - Use `Space` or the top-right HUD buttons to toggle music.
+- Tap the mock Joy-Con `A`, `B`, `X`, and `Y` buttons for open, home, music,
+  and Cemu. Pull the left stick or D-pad to navigate selection; pull the right
+  stick to scroll active panels.
 - Import your own wallpaper, music file, or config from the Studio tile.
 - Open the DNS tile for the simulated SwitchBru DNS browser profile at
   `https://dns.switchbru.com/`.
