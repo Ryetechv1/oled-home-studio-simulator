@@ -1465,6 +1465,7 @@
     }
 
     .pill-btn.active,
+    .control-btn.active,
     .control-btn:hover,
     .pill-btn:hover,
     .control-btn:focus-visible,
@@ -1564,6 +1565,9 @@
     .game-field.cemu-runtime-field {
       display: grid;
       padding: 18px;
+      overflow: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 74, 94, 0.7) rgba(255, 255, 255, 0.1);
       background:
         linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 24%),
         linear-gradient(135deg, rgba(255, 55, 75, 0.16), rgba(5, 8, 14, 0.88));
@@ -1573,6 +1577,7 @@
     .cemu-runtime {
       height: 100%;
       min-height: 0;
+      min-width: 0;
       display: grid;
       grid-template-rows: auto auto minmax(42px, 1fr) auto;
       gap: 10px;
@@ -2153,12 +2158,28 @@
       }
 
       .game-field.cemu-runtime-field {
+        bottom: 210px;
         padding: 12px;
       }
 
       .runtime-header,
       .runtime-grid {
         grid-template-columns: 1fr;
+      }
+
+      .runtime-cell {
+        min-height: 0;
+      }
+
+      .runtime-cell strong {
+        white-space: normal;
+        overflow-wrap: anywhere;
+        line-height: 1.25;
+      }
+
+      .runtime-note {
+        max-height: 78px;
+        overflow: auto;
       }
 
       .runtime-mark {
@@ -2503,7 +2524,7 @@
                   <div class="metric"><span>Files</span><strong id="cemuSideCount">0</strong></div>
                   <div class="metric"><span>Total</span><strong id="cemuSideTotal">0 B</strong></div>
                   <div class="metric"><span>Primary</span><strong id="cemuSidePrimary">none</strong></div>
-                  <div class="metric"><span>Mode</span><strong>local only</strong></div>
+                  <div class="metric"><span>Mode</span><strong id="cemuSideMode">private launch</strong></div>
                 </div>
               </aside>
               <article class="main-panel">
@@ -2530,6 +2551,10 @@
                   <div class="manifest-row">
                     <span>Privacy</span>
                     <strong>browser only</strong>
+                  </div>
+                  <div class="manifest-row">
+                    <span>Launch</span>
+                    <strong id="cemuPrivateState">private request</strong>
                   </div>
                 </div>
                 <div class="cemu-handoff" aria-label="Cemu foreground handoff">
@@ -2566,6 +2591,7 @@
                     <div class="cemu-drop-copy">Scans names, sizes, and file types in your browser. Nothing is sent to GitHub Pages.</div>
                   </div>
                   <div class="button-row">
+                    <button id="cemuPrivateLaunchButton" class="control-btn active" type="button" aria-pressed="true">Private Launch On</button>
                     <button id="cemuLaunchButton" class="control-btn" type="button">Launch Sim</button>
                     <button id="cemuUploadButton" class="control-btn" type="button">Upload Files</button>
                     <button id="cemuFolderButton" class="control-btn" type="button">Folder</button>
@@ -2784,6 +2810,7 @@ Private: browser metadata only.</div>
       playing: false,
       audioReady: false,
       commandCount: 0,
+      privateLaunch: true,
       cemuFiles: [],
       cemuHandoff: {
         nroPath: "sdmc:/switch/Cemu/Cemu.nro",
@@ -2923,6 +2950,10 @@ Private: browser metadata only.</div>
       }
       if (tile.route === "cemu") {
         renderCemu();
+        if (state.privateLaunch) {
+          launchCemuSim("A Open");
+          return;
+        }
       }
       if (tile.route === "game") {
         renderGameSim();
@@ -3385,10 +3416,18 @@ Private: browser metadata only.</div>
       setCemuText("cemuSideCount", String(count));
       setCemuText("cemuSideTotal", formatBytes(totalBytes));
       setCemuText("cemuSidePrimary", sidePrimary);
+      setCemuText("cemuSideMode", state.privateLaunch ? "private launch" : "local only");
       setCemuText("cemuImportCount", `${count} file${count === 1 ? "" : "s"}`);
       setCemuText("cemuImportSize", formatBytes(totalBytes));
       setCemuText("cemuPrimaryFile", primaryLabel);
+      setCemuText("cemuPrivateState", state.privateLaunch ? "private request" : "manual preview");
       cemuLaunchPath.textContent = primary ? `local-upload:/${primary.path}` : "Choose Cemu files or a package folder";
+      const privateLaunchButton = document.getElementById("cemuPrivateLaunchButton");
+      if (privateLaunchButton) {
+        privateLaunchButton.classList.toggle("active", state.privateLaunch);
+        privateLaunchButton.setAttribute("aria-pressed", String(state.privateLaunch));
+        privateLaunchButton.textContent = state.privateLaunch ? "Private Launch On" : "Private Launch Off";
+      }
 
       if (count === 0) {
         cemuUploadList.innerHTML = '<div class="cemu-upload-empty">No local files selected yet.</div>';
@@ -3449,7 +3488,8 @@ Private: browser metadata only.</div>
               <div class="runtime-cell"><span>NRO</span><strong>${escapeHtml(handoff.nroPath)}</strong></div>
               <div class="runtime-cell"><span>Args</span><strong>${escapeHtml(handoff.args)}</strong></div>
               <div class="runtime-cell"><span>Files</span><strong>0</strong></div>
-              <div class="runtime-cell"><span>Mode</span><strong>handoff sim</strong></div>
+              <div class="runtime-cell"><span>Mode</span><strong>${state.privateLaunch ? "private launch" : "handoff sim"}</strong></div>
+              <div class="runtime-cell"><span>Upload</span><strong>local metadata</strong></div>
               <div class="runtime-cell"><span>Cemu init</span><strong>Cemu::InitializeSystem()</strong></div>
               <div class="runtime-cell"><span>Cemu title</span><strong>${escapeHtml(handoff.gamePath)}</strong></div>
             </div>
@@ -3489,7 +3529,7 @@ Private: browser metadata only.</div>
             <div class="runtime-cell"><span>Primary</span><strong>${escapeHtml(primary.kind)}</strong></div>
             <div class="runtime-cell"><span>Files</span><strong>${count}</strong></div>
             <div class="runtime-cell"><span>Total</span><strong>${formatBytes(totalBytes)}</strong></div>
-            <div class="runtime-cell"><span>Mode</span><strong>handoff sim</strong></div>
+            <div class="runtime-cell"><span>Mode</span><strong>${state.privateLaunch ? "private launch" : "handoff sim"}</strong></div>
             <div class="runtime-cell"><span>NRO</span><strong>${escapeHtml(handoff.nroPath)}</strong></div>
             <div class="runtime-cell"><span>Args</span><strong>${escapeHtml(handoff.args)}</strong></div>
             <div class="runtime-cell"><span>env call</span><strong>${escapeHtml(handoff.call)}</strong></div>
@@ -3508,6 +3548,7 @@ Private: browser metadata only.</div>
       renderCemuLaunchSim();
       cemuLog.textContent = [
         state.cemuFiles.length > 0 ? "Launch sim rendered staged files." : "Launch sim opened with no files staged.",
+        state.privateLaunch ? "Private launch request: browser-local metadata only." : "Manual preview mode: no execution.",
         `Next load: ${handoff.call}`,
         "No binary or game package is loaded by the public webapp."
       ].join("\n");
@@ -4023,6 +4064,12 @@ Private: browser metadata only.</div>
       document.getElementById("cemuLaunchButton").addEventListener("click", (event) => {
         event.stopPropagation();
         launchCemuSim("Launch Sim");
+      });
+      document.getElementById("cemuPrivateLaunchButton").addEventListener("click", (event) => {
+        event.stopPropagation();
+        state.privateLaunch = !state.privateLaunch;
+        renderCemu(state.privateLaunch ? "Private launch mode enabled." : "Private launch mode disabled.");
+        statusLine.textContent = state.privateLaunch ? "Private Launch On." : "Private Launch Off.";
       });
       document.getElementById("cemuDnsButton").addEventListener("click", () => {
         renderDns();

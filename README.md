@@ -24,6 +24,8 @@ artifacts and local MP3 files are intentionally not included.
   binaries, keys, WUA/game content, tickets, and certificates are not published.
 - The Switch Cemu upload picker is client-side only; it scans selected file names,
   sizes, and types in the browser without uploading the files anywhere.
+- With Private Launch on, clicking the Switch Cemu tile or pressing `A` while it
+  is selected opens the Cemu launch preview using local-only metadata.
 - Launch Sim renders the staged Cemu file manifest in the mock game surface so
   selected files remain visible after launch.
 - The Cemu panel previews the foreground `envSetNextLoad` handoff path and
